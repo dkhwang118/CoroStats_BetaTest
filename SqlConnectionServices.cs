@@ -8,7 +8,9 @@ using System.Windows;
 
 namespace CoroStats_BetaTest
 {
-    
+    /// <summary>
+    /// Referenced from https://stackoverflow.com/a/32994049
+    /// </summary>
 
     public class SqlConnectionServices
     { 
