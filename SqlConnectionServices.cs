@@ -11,11 +11,7 @@ namespace CoroStats_BetaTest
     
 
     public class SqlConnectionServices
-    {
-        static string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
-        string path = (System.IO.Path.GetDirectoryName(executable));
-        //CurrentDomain.SetData("DataDirectory", path);
-
+    { 
         /// <summary>
         /// Sql Connection Object
         /// </summary>
