@@ -6,7 +6,7 @@
       xmlns:CoroStats_BetaTest="clr-namespace:CoroStats_BetaTest"
       mc:Ignorable="d" 
       d:DesignHeight="350" d:DesignWidth="500"
-    Title="ExpenseIt - Home">
+    Title="Corona Stats - Home">
 
     <!-- Static DateTime Data Setup Credit goes to: https://stackoverflow.com/a/2431741-->
 
@@ -18,7 +18,7 @@
         </Grid.Resources>
 
 
-        <Canvas Background="White" >
+        <Canvas Background="WhiteSmoke" >
             <!-- Button: Add Data -->
             <Button Content="Add Data" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Width="95" Click="Button_Click"/>
 
