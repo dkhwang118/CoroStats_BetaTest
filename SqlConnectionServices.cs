@@ -17,20 +17,31 @@ namespace CoroStats_BetaTest
         /// <summary>
         /// Sql Connection Object
         /// </summary>
-        public SqlConnection Con { get; set; }
+        public SqlConnection Conn { get; set; }
         /// <summary>
         /// Sql connection string
         /// </summary>
         private string connectionString { get; set; }
 
+        private string connectionMessage { get; set; }
+
+        
+        private void connectionInfoMessage(object sender, SqlInfoMessageEventArgs e)
+        {
+            connectionMessage = e.Message;
+        }
+
+        /// <summary>
+        /// Opens the SqlConnection to the Database
+        /// </summary>
         public void OpenConnection()
         {
             // Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\David\source\repos\CoroStats_BetaTest\CoronaStatsDB.mdf;Integrated Secu
             connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\David\\source\\repos\\CoroStats_BetaTest\\CoronaStatsDB.mdf;Integrated Security=True";
-            Con = new SqlConnection(connectionString);
+            Conn = new SqlConnection(connectionString);
             try
             {
-                Con.Open();
+                Conn.Open();
             }
             catch (Exception ex)
             {
@@ -38,9 +49,33 @@ namespace CoroStats_BetaTest
             }
         }
 
+        /// <summary>
+        /// Closes the database connection
+        /// </summary>
         public void CloseConnection()
         {
-            Con.Close();
+            Conn.Close();
+        }
+
+        /// <summary>
+        /// Executes the stored database procedure 'dbo.InitializeDB', attempting to initialize the database with the base tables
+        /// </summary>
+        /// <returns>bool if database has already been initialized</returns>
+        public bool InitializeDB()
+        {
+            using (var command = new SqlCommand("InitializeDB", Conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            })
+            {
+                Conn.InfoMessage += new SqlInfoMessageEventHandler(connectionInfoMessage);
+                command.ExecuteNonQuery();
+                if (connectionMessage == "DB is not initialized")
+                {
+                    return false;
+                }
+                else { return true; }
+            }
         }
     }
 }

@@ -26,5 +26,12 @@ namespace CoroStats_BetaTest.ViewModels
             get => _totalCases;
             set => SetProperty(ref _totalCases, value);
         }
+
+        private bool _dbIsInitialized;
+        public bool DbIsInitialized
+        {
+            get => _dbIsInitialized;
+            set => SetProperty(ref _dbIsInitialized, value);
+        }
     }
 }

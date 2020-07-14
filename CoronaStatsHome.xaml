@@ -21,7 +21,7 @@
             <!-- Button: Add Data -->
             <Button Content="Add Data" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Width="95" Click="Button_Click_AddData"/>
             <!-- button: settings -->
-            <Button Content="Settings" Height="35" Width="95" Click="Button_Click_Settings" Canvas.Top="315"/>
+            <Button Content="Settings" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="35" Width="95" Click="Button_Click_Settings" Canvas.Top="315"/>
             <!-- Label: Today's Date -->
             <Label Content="Today's Date:" Margin="133,38,0,0" Canvas.Top="-31" Canvas.Left="-24"/>
             <!-- TextBlock: Static Data; Today's Date-->
