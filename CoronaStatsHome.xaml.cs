@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CoroStats_BetaTest.Pages;
+using CoroStats_BetaTest.ViewModels;
 
 namespace CoroStats_BetaTest
 {
@@ -22,11 +23,21 @@ namespace CoroStats_BetaTest
     {
         public CoronaStatsHome()
         {
-            InitializeComponent();
+            // Initialize ViewModel for Homepage
+            var vm_Home = new ViewModel_Home();
+
+            // default values
+            vm_Home.TotalCases = 999;
 
             // try to open SQL connection
             SqlConnectionServices SqlCon = new SqlConnectionServices();
             SqlCon.OpenConnection();
+
+            
+
+
+            DataContext = vm_Home;
+            InitializeComponent();
 
 
         }
@@ -36,11 +47,16 @@ namespace CoroStats_BetaTest
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click_AddData(object sender, RoutedEventArgs e)
         {
             // GoTo Add Data Page
             View_AddData view_AddData = new View_AddData();
             this.NavigationService.Navigate(view_AddData);
+
+        }
+
+        private void Button_Click_Settings(object sender, RoutedEventArgs e)
+        {
 
         }
     }

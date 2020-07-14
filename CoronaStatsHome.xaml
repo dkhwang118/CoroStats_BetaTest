@@ -6,13 +6,12 @@
       xmlns:CoroStats_BetaTest="clr-namespace:CoroStats_BetaTest"
       mc:Ignorable="d" 
       d:DesignHeight="350" d:DesignWidth="500"
-    Title="Corona Stats - Home">
+    WindowTitle="Corona Stats - Home">
 
     <!-- Static DateTime Data Setup Credit goes to: https://stackoverflow.com/a/2431741-->
 
     <Grid>
         <Grid.Resources>
-            <CoroStats_BetaTest:StaticDataSurrogate x:Key="Static" />
             <CoroStats_BetaTest:FormatConverter x:Key="Formatter" />
 
         </Grid.Resources>
@@ -20,12 +19,16 @@
 
         <Canvas Background="WhiteSmoke" >
             <!-- Button: Add Data -->
-            <Button Content="Add Data" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Width="95" Click="Button_Click"/>
-
+            <Button Content="Add Data" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Width="95" Click="Button_Click_AddData"/>
+            <!-- button: settings -->
+            <Button Content="Settings" Height="35" Width="95" Click="Button_Click_Settings" Canvas.Top="315"/>
             <!-- Label: Today's Date -->
             <Label Content="Today's Date:" Margin="133,38,0,0" Canvas.Top="-31" Canvas.Left="-24"/>
             <!-- TextBlock: Static Data; Today's Date-->
-            <TextBlock Canvas.Left="189" Canvas.Top="12" Text="{Binding DateToday, Source={StaticResource Static}, Converter={StaticResource Formatter}, ConverterParameter='dd MMM yyy'}" TextWrapping="Wrap" Width="110"/>
+            <TextBlock Canvas.Left="189" Canvas.Top="12" Text="{Binding Path=DateToday, Converter={StaticResource Formatter}, ConverterParameter='dd MMM yyy'}" TextWrapping="Wrap" Width="110"/>
+            <Label Content="Total Cases:" Canvas.Left="109" Canvas.Top="33" Width="80"/>
+            <TextBlock Canvas.Left="189" Canvas.Top="38" Text="{Binding Path=TotalCases}" TextWrapping="Wrap"/>
+
 
         </Canvas>
 

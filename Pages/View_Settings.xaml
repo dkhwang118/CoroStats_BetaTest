@@ -1,4 +1,4 @@
-﻿<Page x:Class="CoroStats_BetaTest.Pages.View_AddData"
+﻿<Page x:Class="CoroStats_BetaTest.Pages.View_Settings"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,15 +6,17 @@
       xmlns:CoroStats_BetaTest="clr-namespace:CoroStats_BetaTest"
       mc:Ignorable="d" 
       d:DesignHeight="350" d:DesignWidth="500"
-    WindowTitle="Corona Stats - Add Data">
+    WindowTitle="Corona Stats - Settings">
 
     <Grid>
 
         <Canvas Background="WhiteSmoke">
-            
+            <!-- Button: Initialize Data ==> input initial data into program -->
+            <Button Content="Initialize Data" Canvas.Left="166" Canvas.Top="19" Width="168" Height="26" Click="Button_Click_InitializeData"/>
+
         </Canvas>
-        
+
     </Grid>
-    
+
 
 </Page>

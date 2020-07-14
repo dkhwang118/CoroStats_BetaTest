@@ -1,14 +1,21 @@
-﻿using System;
+﻿///
+///     StaticDataSurrogate.cs
+///     
+///     Static DateTime Data Setup Credit goes to: https://stackoverflow.com/a/2431741
+///     Edited By: David K. Hwang
+/// 
+///     Used to house DateTime and Formatter for DateTime
+/// 
+
+
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Data;
 
 namespace CoroStats_BetaTest
 {
-    /// <summary>
-    /// Class to house static data that shows on UI
-    /// Static DateTime Data Setup Credit goes to: https://stackoverflow.com/a/2431741
-    /// </summary>
     public class StaticDataSurrogate
     {
         public DateTime DateToday { get { return DateTime.Today; } }
