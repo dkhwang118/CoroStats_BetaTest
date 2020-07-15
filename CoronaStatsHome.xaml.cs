@@ -24,7 +24,7 @@ namespace CoroStats_BetaTest
         public CoronaStatsHome()
         {
             // Initialize ViewModel for Homepage
-            var vm_Home = new ViewModel_Home();
+            var vm_Home = new ViewModel_Home(NavigationService.Navigate(new View_AddData()), Button_Click_Settings);
 
             // default values
             vm_Home.TotalCases = 0;

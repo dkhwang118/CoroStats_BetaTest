@@ -29,6 +29,16 @@
             <Label Content="Total Cases:" Canvas.Left="109" Canvas.Top="33" Width="80"/>
             <TextBlock Canvas.Left="189" Canvas.Top="38" Text="{Binding Path=TotalCases}" TextWrapping="Wrap"/>
 
+            <ItemsControl ItemsSource="{Binding Path=.}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontWeight="Bold" Text="{Binding LeftMenuCommands}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
 
         </Canvas>
 
