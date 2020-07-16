@@ -1,9 +1,6 @@
-﻿using CoroStats_BetaTest.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -14,16 +11,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CoroStats_BetaTest
+namespace CoroStats_BetaTest.Pages
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for View_Home.xaml
     /// </summary>
-    public partial class MainWindow 
+    public partial class View_Home : System.Windows.Controls.UserControl
     {
-        public MainWindow()
+        public View_Home()
         {
-            DataContext = new ViewModel_MainWindow();
             InitializeComponent();
         }
     }
