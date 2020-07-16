@@ -11,7 +11,8 @@
     <Grid>
 
         <Canvas Background="WhiteSmoke">
-            
+            <TextBox Canvas.Left="224" Canvas.Top="130" Text="AddData View" TextWrapping="Wrap" Width="120" TextChanged="TextBox_TextChanged"/>
+
         </Canvas>
         
     </Grid>

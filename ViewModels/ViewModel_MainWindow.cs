@@ -64,14 +64,23 @@ namespace CoroStats_BetaTest.ViewModels
             return new List<CommandViewModel>
             {
                 new CommandViewModel(
-                    "Add Data",
+                    "Home",
                     new RelayCommand(param => this.ShowHomeView())),
+                new CommandViewModel(
+                    "Add Data",
+                    new RelayCommand(param => this.ShowAddDataView())),
             };
         }
 
         void ShowHomeView()
         {
             ViewModel_Home viewModel = new ViewModel_Home();
+            this._currentWindow = viewModel;
+        }
+
+        void ShowAddDataView()
+        {
+            ViewModel_AddData viewModel = new ViewModel_AddData();
             this._currentWindow = viewModel;
         }
 

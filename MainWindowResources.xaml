@@ -14,7 +14,15 @@ This resource dictionary is used by the MainWindow.
     <DataTemplate DataType="{x:Type vm:ViewModel_Home}">
         <vw:View_Home/>
     </DataTemplate>
-    
+
+    <!-- 
+  This template applies an View_Home to an instance 
+  of the ViewModel_Home class shown in the main window.
+  -->
+    <DataTemplate DataType="{x:Type vm:ViewModel_AddData}">
+        <vw:View_AddData/>
+    </DataTemplate>
+
     <!-- 
   This style configures both of the main content areas in the main window.
   -->
