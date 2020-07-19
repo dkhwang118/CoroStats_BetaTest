@@ -81,7 +81,7 @@ namespace CoroStats_BetaTest.ViewModels
         void ShowAddDataView()
         {
             ViewModel_AddData viewModel = new ViewModel_AddData();
-            this._currentWindow = viewModel;
+            this.SetProperty<ViewModel_SelectedWindow>(ref _currentWindow, viewModel);
         }
 
 

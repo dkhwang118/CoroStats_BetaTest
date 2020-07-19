@@ -23,7 +23,6 @@ namespace CoroStats_BetaTest
     {
         public MainWindow()
         {
-            DataContext = new ViewModel_MainWindow();
             InitializeComponent();
         }
     }

@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using CoroStats_BetaTest.ViewModels;
 
 namespace CoroStats_BetaTest
 {
@@ -13,5 +14,23 @@ namespace CoroStats_BetaTest
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            MainWindow window = new MainWindow();
+
+            // Create the ViewModel to which 
+            // the main window binds.
+            var viewModel = new ViewModel_MainWindow();
+
+            // Allow all controls in the window to 
+            // bind to the ViewModel by setting the 
+            // DataContext, which propagates down 
+            // the element tree.
+            window.DataContext = viewModel;
+
+            window.Show();
+        }
     }
 }
