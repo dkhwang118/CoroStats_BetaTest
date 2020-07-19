@@ -135,4 +135,10 @@ This resource dictionary is used by the MainWindow.
             />
     </DataTemplate>
 
+    <DataTemplate x:Key="RightWindowViewTemplate3">
+        <Grid>
+            <ContentControl x:Name="_currentContent" />
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>

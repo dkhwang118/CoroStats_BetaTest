@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace CoroStats_BetaTest.Pages
 {
-    public partial class View_AddData : Page
+    public partial class View_AddData : System.Windows.Controls.UserControl
     {
         public View_AddData()
         {

@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace CoroStats_BetaTest.ViewModels
@@ -15,6 +16,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         ReadOnlyCollection<CommandViewModel> _leftMenuCommands;
         ViewModel_SelectedWindow _currentWindow;
+        ContentControl _currentContent;
 
         #endregion // Fields
 
@@ -23,7 +25,9 @@ namespace CoroStats_BetaTest.ViewModels
         public ViewModel_MainWindow()
         {
             base.DisplayName = "MainWindow - Home";
-            _currentWindow = new ViewModel_Home();
+            //_currentWindow = new ViewModel_Home();
+            _currentContent = new ContentControl();
+            _currentContent.Content = new ViewModel_Home();
         }
 
         #endregion // Constructor
@@ -56,6 +60,18 @@ namespace CoroStats_BetaTest.ViewModels
             }
         }
 
+        public ContentControl CurrentContent
+        {
+            get
+            {
+                if (_currentContent == null)
+                {
+                    _currentContent = new ContentControl();
+                }
+                return _currentContent;
+            }
+        }
+
         #endregion // CurrentWindow
 
 
@@ -76,12 +92,14 @@ namespace CoroStats_BetaTest.ViewModels
         {
             ViewModel_Home viewModel = new ViewModel_Home();
             this._currentWindow = viewModel;
+            this._currentContent.Content = viewModel;
         }
 
         void ShowAddDataView()
         {
             ViewModel_AddData viewModel = new ViewModel_AddData();
-            this.SetProperty<ViewModel_SelectedWindow>(ref _currentWindow, viewModel);
+            this._currentWindow = viewModel;
+            this._currentContent.Content = viewModel;
         }
 
 
