@@ -30,22 +30,21 @@ This resource dictionary is used by the MainWindow.
         <Setter Property="HeaderTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <Border 
-            Background="{StaticResource Brush_HeaderBackground}" 
-            BorderBrush="LightGray" 
-            BorderThickness="1" 
-            CornerRadius="5" 
-            Margin="4" 
-            Padding="4" 
-            SnapsToDevicePixels="True" 
-            >
+                    <Border Background="{StaticResource Brush_HeaderBackground}" 
+                        BorderBrush="LightGray" 
+                        BorderThickness="1" 
+                        CornerRadius="5" 
+                        Margin="4" 
+                        Padding="4" 
+                        SnapsToDevicePixels="True" 
+                        >
                         <TextBlock 
-              FontSize="14"
-              FontWeight="Bold"
-              Foreground="White" 
-              HorizontalAlignment="Center"  
-              Text="{TemplateBinding Content}" 
-              />
+                          FontSize="14"
+                          FontWeight="Bold"
+                          Foreground="White" 
+                          HorizontalAlignment="Center"  
+                          Text="{TemplateBinding Content}" 
+                          />
                     </Border>
                 </DataTemplate>
             </Setter.Value>
@@ -60,14 +59,14 @@ This resource dictionary is used by the MainWindow.
                 <ControlTemplate TargetType="{x:Type HeaderedContentControl}">
                     <DockPanel>
                         <ContentPresenter 
-              DockPanel.Dock="Top"
-              ContentSource="Header" 
-              ContentTemplate="{TemplateBinding HeaderTemplate}" 
-              />
+                          DockPanel.Dock="Top"
+                          ContentSource="Header" 
+                          ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                          />
                         <ContentPresenter 
-              ContentSource="Content" 
-              ContentTemplate="{TemplateBinding ContentTemplate}" 
-              />
+                          ContentSource="Content" 
+                          ContentTemplate="{TemplateBinding ContentTemplate}" 
+                          />    
                     </DockPanel>
                 </ControlTemplate>
             </Setter.Value>
@@ -85,28 +84,31 @@ This resource dictionary is used by the MainWindow.
         <Setter Property="SnapsToDevicePixels" Value="True" />
     </Style>
 
-    <!--
-  This template explains how to render the list of commands on the left
-  side in the main window (the 'Control Panel' area).
-  -->
+    <!-- Template For creating command buttons on the left-side control panel -->
     <DataTemplate x:Key="CommandsTemplate">
         <ItemsControl IsTabStop="False" ItemsSource="{Binding}" Margin="6,2">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
+                    <!-- Old way
                     <TextBlock Margin="2,6">
-            <Hyperlink Command="{Binding Path=Command}">
-              <TextBlock Text="{Binding Path=DisplayName}" />
-            </Hyperlink>
-          </TextBlock>
+                        <Hyperlink Command="{Binding Path=Command}">
+                            <TextBlock Text="{Binding Path=DisplayName}" />
+                        </Hyperlink>
+                    </TextBlock>
+                    -->
+                    <Button Content="{Binding Path=DisplayName}"
+                            Width="Auto"
+                            Height="35"
+                            Command="{Binding Path=Command}"
+                            Visibility="Visible"
+                            />
+
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </DataTemplate>
 
-    <!-- 
-  This template explains how to render 
-  a tab item with a close button.
-  -->
+    <!-- Template For Presenting UserControl Content in the Right-Side Window -->
     <DataTemplate x:Key="RightWindowViewTemplate">
         <ContentPresenter 
               Content="{Binding}" 

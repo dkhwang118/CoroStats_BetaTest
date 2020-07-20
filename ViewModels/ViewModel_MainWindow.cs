@@ -16,6 +16,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         ReadOnlyCollection<CommandViewModel> _leftMenuCommands;
         ContentControl _currentContent;
+        string _currentContentHeader;
 
         #endregion // Fields
 
@@ -24,7 +25,6 @@ namespace CoroStats_BetaTest.ViewModels
         public ViewModel_MainWindow()
         {
             base.DisplayName = "MainWindow - Home";
-            //_currentWindow = new ViewModel_Home();
             _currentContent = new ContentControl();
             _currentContent.Content = new ViewModel_Home();
         }
@@ -59,6 +59,22 @@ namespace CoroStats_BetaTest.ViewModels
             }
         }
 
+        public string CurrentContentHeader
+        {
+            get
+            {
+                if (_currentContentHeader == null)
+                {
+                    _currentContentHeader = "Home";
+                }
+                return _currentContentHeader;
+            }
+            set
+            {
+                _currentContentHeader = value; this.OnPropertyChanged("CurrentContentHeader");
+            }
+        }
+
         #endregion // CurrentContent
 
 
@@ -79,12 +95,14 @@ namespace CoroStats_BetaTest.ViewModels
         {
             ViewModel_Home viewModel = new ViewModel_Home();
             this.CurrentContent.Content = viewModel;
+            this.CurrentContentHeader = "Home";
         }
 
         void ShowAddDataView()
         {
             ViewModel_AddData viewModel = new ViewModel_AddData();
             this.CurrentContent.Content = viewModel;
+            this.CurrentContentHeader = "Add Data To Database";
         }
 
 

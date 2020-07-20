@@ -17,16 +17,16 @@
             </Grid.ColumnDefinitions>
 
             <Border 
-        Grid.Column="0" 
-        Style="{StaticResource MainBorderStyle}"
-        Width="170"
-        >
+            Grid.Column="0" 
+            Style="{StaticResource MainBorderStyle}"
+            Width="170"
+            >
                 <HeaderedContentControl
-          Content="{Binding Path=LeftMenuCommands}"
-          ContentTemplate="{StaticResource CommandsTemplate}"
-          Header="Control Panel"
-          Style="{StaticResource MainHCCStyle}"
-          />
+                  Content="{Binding Path=LeftMenuCommands}"
+                  ContentTemplate="{StaticResource CommandsTemplate}"
+                  Header="Control Panel"
+                  Style="{StaticResource MainHCCStyle}"
+                  />    
             </Border>
 
             <Border
@@ -36,7 +36,7 @@
                 <HeaderedContentControl 
                   Content="{Binding Path=CurrentContent}"
                   ContentTemplate="{StaticResource RightWindowViewTemplate}"
-                  Header="Workspaces"
+                  Header="{Binding Path=CurrentContentHeader}"
                   Style="{StaticResource MainHCCStyle}"
                   />    
             </Border>
