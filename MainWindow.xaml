@@ -34,8 +34,8 @@
                 Style="{StaticResource MainBorderStyle}"
             >
                 <HeaderedContentControl 
-                  Content="{Binding Path=CurrentWindow}"
-                  ContentTemplate="{StaticResource RightWindowViewTemplate2}"
+                  Content="{Binding Path=CurrentContent}"
+                  ContentTemplate="{StaticResource RightWindowViewTemplate}"
                   Header="Workspaces"
                   Style="{StaticResource MainHCCStyle}"
                   />    

@@ -15,7 +15,6 @@ namespace CoroStats_BetaTest.ViewModels
         #region Fields
 
         ReadOnlyCollection<CommandViewModel> _leftMenuCommands;
-        ViewModel_SelectedWindow _currentWindow;
         ContentControl _currentContent;
 
         #endregion // Fields
@@ -46,19 +45,7 @@ namespace CoroStats_BetaTest.ViewModels
         }
 
 
-        #region CurrentWindow
-
-        public ViewModel_SelectedWindow CurrentWindow
-        {
-            get
-            {
-                if (_currentWindow == null)
-                {
-                    _currentWindow = new ViewModel_Home();
-                }
-                return _currentWindow;
-            }
-        }
+        #region CurrentContent
 
         public ContentControl CurrentContent
         {
@@ -72,7 +59,7 @@ namespace CoroStats_BetaTest.ViewModels
             }
         }
 
-        #endregion // CurrentWindow
+        #endregion // CurrentContent
 
 
         List<CommandViewModel> CreateCommands()
@@ -91,14 +78,12 @@ namespace CoroStats_BetaTest.ViewModels
         void ShowHomeView()
         {
             ViewModel_Home viewModel = new ViewModel_Home();
-            this._currentWindow = viewModel;
             this._currentContent.Content = viewModel;
         }
 
         void ShowAddDataView()
         {
             ViewModel_AddData viewModel = new ViewModel_AddData();
-            this._currentWindow = viewModel;
             this._currentContent.Content = viewModel;
         }
 

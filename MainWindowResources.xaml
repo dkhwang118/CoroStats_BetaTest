@@ -108,37 +108,11 @@ This resource dictionary is used by the MainWindow.
   a tab item with a close button.
   -->
     <DataTemplate x:Key="RightWindowViewTemplate">
-        <DockPanel Width="120">
-            <ContentPresenter 
-              Content="{Binding}" 
-              VerticalAlignment="Center" 
-            />
-        </DockPanel>
-    </DataTemplate>
-
-    <!--
-  This template explains how to render the 'Workspace' content area in the main window.
-  -->
-    <DataTemplate x:Key="WorkspacesTemplate">
-        <TabControl 
-      IsSynchronizedWithCurrentItem="True" 
-      ItemsSource="{Binding}" 
-      ItemTemplate="{StaticResource RightWindowViewTemplate}"
-      Margin="4"
-      />
-    </DataTemplate>
-
-    <DataTemplate x:Key="RightWindowViewTemplate2">
         <ContentPresenter 
               Content="{Binding}" 
-              VerticalAlignment="Center" 
-            />
-    </DataTemplate>
-
-    <DataTemplate x:Key="RightWindowViewTemplate3">
-        <Grid>
-            <ContentControl x:Name="_currentContent" />
-        </Grid>
+              VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+        />
     </DataTemplate>
 
 </ResourceDictionary>

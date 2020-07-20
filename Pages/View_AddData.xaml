@@ -5,17 +5,14 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:CoroStats_BetaTest="clr-namespace:CoroStats_BetaTest"
       mc:Ignorable="d" 
-      d:DesignHeight="350" d:DesignWidth="500"
     >
 
-    <Grid>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Margin="4,4,4,4">
+            <TextBox Text="AddData View" TextWrapping="Wrap" Width="120" TextChanged="TextBox_TextChanged"/>
 
-        <Canvas Background="WhiteSmoke">
-            <TextBox Canvas.Left="224" Canvas.Top="130" Text="AddData View" TextWrapping="Wrap" Width="120" TextChanged="TextBox_TextChanged"/>
 
-        </Canvas>
-        
-    </Grid>
-    
+        </Grid>
+    </DockPanel>
 
 </UserControl>
