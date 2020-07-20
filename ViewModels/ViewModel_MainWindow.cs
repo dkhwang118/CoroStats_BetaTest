@@ -78,13 +78,13 @@ namespace CoroStats_BetaTest.ViewModels
         void ShowHomeView()
         {
             ViewModel_Home viewModel = new ViewModel_Home();
-            this._currentContent.Content = viewModel;
+            this.CurrentContent.Content = viewModel;
         }
 
         void ShowAddDataView()
         {
             ViewModel_AddData viewModel = new ViewModel_AddData();
-            this._currentContent.Content = viewModel;
+            this.CurrentContent.Content = viewModel;
         }
 
 

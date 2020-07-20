@@ -4,15 +4,17 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:CoroStats_BetaTest="clr-namespace:CoroStats_BetaTest"
-      mc:Ignorable="d" 
-    >
-
-    <DockPanel>
-        <Grid DockPanel.Dock="Top" Margin="4,4,4,4">
-            <TextBox Text="AddData View" TextWrapping="Wrap" Width="120" TextChanged="TextBox_TextChanged"/>
+      mc:Ignorable="d"
+      HorizontalAlignment="Left"
+      VerticalAlignment="Top"
+      >
 
 
-        </Grid>
-    </DockPanel>
+    <Grid DockPanel.Dock="Top" Margin="4,4,4,4">
+        <TextBox Text="AddData View" TextWrapping="Wrap" Width="120" TextChanged="TextBox_TextChanged"/>
+
+
+    </Grid>
+
 
 </UserControl>

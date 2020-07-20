@@ -9,24 +9,57 @@
       mc:Ignorable="d" 
       HorizontalAlignment="Center"
         VerticalAlignment="Center"  
-        Height="200"
-        Width="400"
       >
     <DockPanel>
-        <Grid>
+        <Grid Margin="4,4,4,4">
             <Grid.Resources>
                 <CoroStats_BetaTest:FormatConverter x:Key="Formatter" />
             </Grid.Resources>
 
-            <Canvas Background="WhiteSmoke" >
-                <!-- Label: Today's Date -->
-                <Label Content="Today's Date:" Margin="133,38,0,0" Canvas.Top="-31" Canvas.Left="-24"/>
-                <!-- TextBlock: Static Data; Today's Date-->
-                <TextBlock Canvas.Left="189" Canvas.Top="12" Text="{Binding Path=DateToday, Converter={StaticResource Formatter}, ConverterParameter='dd MMM yyy'}" TextWrapping="Wrap" Width="110"/>
-                <Label Content="Total Cases:" Canvas.Left="109" Canvas.Top="33" Width="80"/>
-                <TextBlock Canvas.Left="189" Canvas.Top="38" Text="{Binding Path=TotalCases}" TextWrapping="Wrap"/>
-            </Canvas>
-        
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+
+            <!-- Label: Today's Date -->
+            <Label Grid.Row="0" Grid.Column="0" 
+                Content="Today's Date:" 
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                />
+            
+            <!-- TextBlock: Static Data; Today's Date-->
+            <TextBlock Grid.Row="0" Grid.Column="2" 
+                Text="{Binding Path=DateToday, Converter={StaticResource Formatter}, ConverterParameter='dd MMM yyy'}" 
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                />
+
+
+            <Label Grid.Row="2" Grid.Column="0" 
+                Content="Total Cases:"
+                   HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                   />
+
+            <TextBlock Grid.Row="2" Grid.Column="2"  
+                       Text="{Binding Path=TotalCases}" 
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                       />
+
+
         </Grid>
     </DockPanel>
 </UserControl>
