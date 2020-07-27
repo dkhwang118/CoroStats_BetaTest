@@ -21,6 +21,13 @@ This resource dictionary is used by the MainWindow.
   -->
     <DataTemplate DataType="{x:Type vm:ViewModel_AddData}">
         <vw:View_AddData/>
+    </DataTemplate
+                  
+ <!-- This template applies a View_Add to an instance 
+  of the ViewModel_Home class shown in the main window.
+  -->
+    <DataTemplate DataType="{x:Type vm:ViewModel_AddDataManually}">
+        <vw:View_AddDataManually/>
     </DataTemplate>
 
     <!-- 
@@ -115,7 +122,6 @@ This resource dictionary is used by the MainWindow.
         <ContentPresenter 
               Content="{Binding}" 
               VerticalAlignment="Top"
-                HorizontalAlignment="Left"
         />
     </DataTemplate>
 

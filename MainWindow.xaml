@@ -24,7 +24,7 @@
                 <HeaderedContentControl
                   Content="{Binding Path=LeftMenuCommands}"
                   ContentTemplate="{StaticResource CommandsTemplate}"
-                  Header="Control Panel"
+                  Header="Menu"
                   Style="{StaticResource MainHCCStyle}"
                   />    
             </Border>

@@ -5,13 +5,37 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:CoroStats_BetaTest="clr-namespace:CoroStats_BetaTest"
       mc:Ignorable="d"
-      HorizontalAlignment="Left"
+      HorizontalAlignment="Center"
       VerticalAlignment="Top"
       >
 
 
     <Grid DockPanel.Dock="Top" Margin="4,4,4,4">
-        <TextBox Text="AddData View" TextWrapping="Wrap" Width="120" TextChanged="TextBox_TextChanged"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Button Grid.Column="1" Grid.Row="1" 
+                Name="Button_AddDataManually" 
+                Content="Add Data Manually" 
+                Command="{Binding Path=Command_AddDataManually}"
+                />
+
+        <Button Grid.Column="1" Grid.Row="3" 
+                Name="Button_AddDataFromSpreadsheet" 
+                Content="Add Data From WHO Spreadsheet" 
+                Command="{Binding Path=Command_AddDataFromSpreadsheet}"
+                />
 
 
     </Grid>

@@ -24,9 +24,7 @@ namespace CoroStats_BetaTest.ViewModels
         
         public ViewModel_MainWindow()
         {
-            base.DisplayName = "MainWindow - Home";
-            _currentContent = new ContentControl();
-            _currentContent.Content = new ViewModel_Home();
+            base.DisplayName = "MainWindow - Home";         
         }
 
         #endregion // Constructor
@@ -54,6 +52,7 @@ namespace CoroStats_BetaTest.ViewModels
                 if (_currentContent == null)
                 {
                     _currentContent = new ContentControl();
+                    _currentContent.Content = new ViewModel_Home();
                 }
                 return _currentContent;
             }
@@ -71,7 +70,8 @@ namespace CoroStats_BetaTest.ViewModels
             }
             set
             {
-                _currentContentHeader = value; this.OnPropertyChanged("CurrentContentHeader");
+                _currentContentHeader = value; 
+                this.OnPropertyChanged("CurrentContentHeader");
             }
         }
 
@@ -102,7 +102,7 @@ namespace CoroStats_BetaTest.ViewModels
         {
             ViewModel_AddData viewModel = new ViewModel_AddData();
             this.CurrentContent.Content = viewModel;
-            this.CurrentContentHeader = "Add Data To Database";
+            this.CurrentContentHeader = viewModel.DisplayName;
         }
 
 
