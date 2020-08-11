@@ -27,6 +27,7 @@ namespace CoroStats_BetaTest.ViewModels
         RelayCommand _command_AddDataManually;
         RelayCommand _command_AddDataFromSpreadsheet;
         Window _window_currentDataEntryWindow;
+        bool _canOpenNewView;
 
         #endregion // Fields
 
@@ -35,6 +36,7 @@ namespace CoroStats_BetaTest.ViewModels
         public ViewModel_AddData()
         {
             this.DisplayName = "Add Data";
+            _canOpenNewView = true;
         }
 
         #endregion // Constructor
@@ -79,7 +81,8 @@ namespace CoroStats_BetaTest.ViewModels
 
         public void OpenManualDataEntryView()
         {
-            _window_currentDataEntryWindow = new View_AddDataManually();
+            _window_currentDataEntryWindow = new View_AddDataManually(OnWindowClose);
+            _canOpenNewView = false;
             _window_currentDataEntryWindow.Show();
         }
 
@@ -88,9 +91,14 @@ namespace CoroStats_BetaTest.ViewModels
             throw new NotImplementedException();
         }
 
+        public void OnWindowClose()
+        {
+            _canOpenNewView = true;
+        }
+
         bool CanOpenNewView
         {
-            get { return _window_currentDataEntryWindow == null; }
+            get { return _canOpenNewView; }
         }
 
         #endregion // Public Methods

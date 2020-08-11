@@ -17,9 +17,17 @@ namespace CoroStats_BetaTest.Pages
     /// </summary>
     public partial class View_AddDataManually : Window
     {
-        public View_AddDataManually()
+        private readonly Action _onWindowClose;
+
+        public View_AddDataManually(Action onWindowClose)
         {
             InitializeComponent();
+            _onWindowClose = onWindowClose;
+        }
+
+        void View_AddDataManually_Closed(object sender, EventArgs e)
+        {
+            _onWindowClose();
         }
     }
 }
