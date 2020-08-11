@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace CoroStats_BetaTest.ViewModels
 {
-    class ViewModel_AddDataManually : ViewModelBase
+    public class ViewModel_AddDataManually : ViewModelBase
     {
         public ViewModel_AddDataManually()
         {

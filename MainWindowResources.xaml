@@ -7,6 +7,7 @@ This resource dictionary is used by the MainWindow.
   xmlns:vm="clr-namespace:CoroStats_BetaTest.ViewModels"
   xmlns:vw="clr-namespace:CoroStats_BetaTest.Pages"
   >
+    
     <!-- 
   This template applies an View_Home to an instance 
   of the ViewModel_Home class shown in the main window.
@@ -29,6 +30,7 @@ This resource dictionary is used by the MainWindow.
     <DataTemplate DataType="{x:Type vm:ViewModel_AddDataManually}">
         <vw:View_AddDataManually/>
     </DataTemplate>
+    
 
     <!-- 
   This style configures both of the main content areas in the main window.

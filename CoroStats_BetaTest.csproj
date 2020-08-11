@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
+  <ItemGroup>
+    <Compile Update="ViewModels\ViewModel_AddDataManually.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+  </ItemGroup>
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -16,9 +21,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-    <Compile Update="ViewModels\ViewModel_AddDataManually.cs">
-      <Generator>MSBuild:Compile</Generator>
     </Compile>
   </ItemGroup>
   <ItemGroup>
