@@ -1,11 +1,11 @@
-﻿<Window x:Class="CoroStats_BetaTest.Pages.View_AddDataManually"
+﻿<Window x:Class="CoroStats_BetaTest.Pages.View_ManualDataEntry"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CoroStats_BetaTest.Pages"
         mc:Ignorable="d"
-        Title="View_AddDataManually" Height="450" Width="800">
+        Title="View_ManualDataEntry" Height="450" Width="800">
     <Grid>
         
     </Grid>

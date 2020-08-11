@@ -13,11 +13,11 @@ using System.Windows.Shapes;
 namespace CoroStats_BetaTest.Pages
 {
     /// <summary>
-    /// Interaction logic for View_AddDataManually.xaml
+    /// Interaction logic for View_ManualDataEntry.xaml
     /// </summary>
-    public partial class View_AddDataManually : Window
+    public partial class View_ManualDataEntry : Window
     {
-        public View_AddDataManually()
+        public View_ManualDataEntry()
         {
             InitializeComponent();
         }
