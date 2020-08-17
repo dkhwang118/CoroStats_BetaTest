@@ -102,7 +102,10 @@ namespace CoroStats_BetaTest.ViewModels
             int colCount = xlRange.Columns.Count;
 
             // test print of first row
-            MessageBox.Show(xlRange.Cells[1, 1].ToString());
+            Excel.Range cell = xlRange.Cells[1, 1] as Excel.Range;
+            MessageBox.Show(cell.Value.ToString());
+
+
         }
 
         #endregion // excel parsing methods
