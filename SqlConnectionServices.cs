@@ -57,6 +57,8 @@ namespace CoroStats_BetaTest
             Conn.Close();
         }
 
+        #region Public Methods
+
         /// <summary>
         /// Executes the stored database procedure 'dbo.InitializeDB', attempting to initialize the database with the base tables
         /// </summary>
@@ -77,5 +79,7 @@ namespace CoroStats_BetaTest
                 else { return true; }
             }
         }
+
+        #endregion // Public Methods
     }
 }

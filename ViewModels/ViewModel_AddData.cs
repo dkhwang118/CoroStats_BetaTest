@@ -71,7 +71,7 @@ namespace CoroStats_BetaTest.ViewModels
                         );
 
                 }
-                return _command_AddDataManually;
+                return _command_AddDataFromSpreadsheet;
             }
         }
 
@@ -88,7 +88,9 @@ namespace CoroStats_BetaTest.ViewModels
 
         public void OpenSpreadsheetDataEntryView()
         {
-            throw new NotImplementedException();
+            _window_currentDataEntryWindow = new View_AddDataFromSpreadsheet(OnWindowClose);
+            _canOpenNewView = false;
+            _window_currentDataEntryWindow.Show();
         }
 
         public void OnWindowClose()

@@ -12,7 +12,7 @@ namespace CoroStats_BetaTest.ViewModels
     {
         public ViewModel_AddDataManually()
         {
-
+            
         }
     }
 }
