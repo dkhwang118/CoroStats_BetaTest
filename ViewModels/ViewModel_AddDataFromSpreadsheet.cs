@@ -17,6 +17,9 @@ using CoroStats_BetaTest.Pages;
 using Microsoft.Win32;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using CoroStats_BetaTest.Services;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace CoroStats_BetaTest.ViewModels
 {
@@ -27,14 +30,24 @@ namespace CoroStats_BetaTest.ViewModels
         RelayCommand _command_openSpreadsheetFile;
         private bool _canOpenFile;
         private string _spreadsheetFilePath;
+        private string _latestDataEntryDate;
+        private Service_ExcelFileHandling _excelFileHandle;
 
         #endregion // Fields
+
+        #region Dispatcher Delegates
+
+        private delegate void NoArgDelegate();
+        private delegate void LoadLatestDateDelegate(string filePath);
+
+        #endregion // Dispatcher Delegates
 
         #region Constructor
 
         public ViewModel_AddDataFromSpreadsheet()
         {
             this.DisplayName = "Add Data From WHO Spreadsheet";
+            this._excelFileHandle = new Service_ExcelFileHandling();
             _canOpenFile = true;
         }
 
@@ -49,7 +62,7 @@ namespace CoroStats_BetaTest.ViewModels
                 if (_command_openSpreadsheetFile == null)
                 {
                     _command_openSpreadsheetFile = new RelayCommand(
-                        param => this.OpenSpreadsheetFileDialogue(),
+                        param => this.OpenSpreadsheetFileAndLoadDate(),
                         param => this._canOpenFile
                         );
                 }
@@ -67,105 +80,32 @@ namespace CoroStats_BetaTest.ViewModels
             set => SetProperty(ref _spreadsheetFilePath, value);     
         }
 
+        public string LatestDataEntryDate
+        {
+            get
+            {
+                if (_latestDataEntryDate == null) _latestDataEntryDate = "...";
+                return _latestDataEntryDate;
+            }
+            set => SetProperty(ref _latestDataEntryDate, value);
+        }
+
         #endregion // Presentation Properties
 
         #region Public Methods
 
-        public void OpenSpreadsheetFileDialogue()
+        /// <summary>
+        /// Summons the OpenFileDialog to open the excel spreadsheet and loads the latest data entry date
+        /// </summary>
+        public void OpenSpreadsheetFileAndLoadDate()
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
+            _spreadsheetFilePath = _excelFileHandle.OpenSpreadsheetFileDialogue();
+            LatestDataEntryDate = "Loading Latest Data Entry Date...";
 
-            if (fileDialog.ShowDialog() == true) SpreadsheetFilePath = fileDialog.FileName;
-
-            GetLatestDateOnFile();
-
-            // help from https://www.wpf-tutorial.com/dialogs/the-openfiledialog/
+            _excelFileHandle.GetLatestDateHandler();
         }
 
         #endregion // Public Methods
-
-        #region Excel File Parsing Methods
-
-        /// <summary>
-        /// Gets the lastest known date of input data from the excel spreadsheet
-        /// </summary>
-        public void GetLatestDateOnFile()
-        {
-            // create COM objects
-            // helping credit to: https://coderwall.com/p/app3ya/read-excel-file-in-c
-            Excel.Application xlApp = new Excel.Application();
-            Excel.Workbook wkbk = xlApp.Workbooks.Open(@_spreadsheetFilePath);
-            Excel.Worksheet xlWorksheet = (Excel.Worksheet)wkbk.Worksheets[1];
-            Excel.Range xlRange = xlWorksheet.UsedRange;
-
-            // get ranges
-            int rowCount = xlRange.Rows.Count;
-            int colCount = xlRange.Columns.Count;
-
-            // test print of first row
-            //Excel.Range testCell = (Excel.Range)xlRange.Cells[1,1];
-           // MessageBox.Show(testCell.Value.ToString() + "\n"
-            //    + "Rows: " + rowCount.ToString() + "\n" 
-             //   + "Columns: " + colCount.ToString());
-
-            // parameters
-            Excel.Range cell;
-            int year = 0;
-            int month = 0;
-            int day = 0;
-
-            // read through rows and find the last known date
-            for (int i = 2; i <= rowCount; i++)
-            {
-                cell = (Excel.Range)xlRange.Cells[i, 1];
-                string[] dateSplit1 = cell.Value.ToString().Split(" ");
-                string[] dateSplit2 = dateSplit1[0].Split("/");
-                int cellMonth = Int16.Parse(dateSplit2[0]);
-                int cellDay = Int16.Parse(dateSplit2[1]);
-                int cellYear = Int16.Parse(dateSplit2[2]);
-
-                // if date is later than currently held last date, change
-                if (cellYear > year)
-                {               
-                    year = cellYear;
-                    month = cellMonth;
-                    day = cellDay;
-                }
-                else if (cellMonth > month){
-                        month = cellMonth;
-                        day = cellDay;
-                }
-                else if (cellMonth == month) 
-                {
-                    if (cellDay > day)
-                    {
-                        day = cellDay;
-                    }
-                }
-            }
-
-            // show latest date
-            MessageBox.Show("Latest Date is: " + month.ToString() + "/" + day.ToString() + "/" + year.ToString());
-
-
-
-
-
-            // always dispose
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            Marshal.ReleaseComObject(xlRange);
-            Marshal.ReleaseComObject(xlWorksheet);
-
-            wkbk.Close();
-            Marshal.ReleaseComObject(wkbk);
-
-            xlApp.Quit();
-            Marshal.ReleaseComObject(xlApp);
-        }
-
-        #endregion // excel parsing methods
 
     }
 }

@@ -34,6 +34,10 @@
         <Label Grid.Column="1" Grid.Row="1" Content="WHO Spreadsheet File:" Padding="0,0,10,0"/>
         <TextBox DataContext="{Binding }" Text="{Binding Path=SpreadsheetFilePath}" Grid.Column="2" Grid.Row="1" Background="White" />
         <Button Grid.Column="4" Grid.Row="1" Content="Open File" Command="{Binding Path=Command_OpenSpreadsheetFile}"/>
+        
+        <!-- Latest Data Entry Date Controls-->
+        <Label Grid.Column="1" Grid.Row="3" Content="Latest Data Entry Date:" Padding="0,0,10,0"/>
+        <TextBox Grid.Column="2" Grid.Row="3" Text="{Binding Path=LatestDataEntryDate}" />
 
     </Grid>
 </Window>
