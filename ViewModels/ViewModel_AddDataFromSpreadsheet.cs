@@ -19,6 +19,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Threading;
+using Microsoft.VisualBasic.FileIO;
 
 namespace CoroStats_BetaTest.ViewModels
 {
@@ -130,14 +131,123 @@ namespace CoroStats_BetaTest.ViewModels
 
         private void GetLatestDateThreadStartingPoint()
         {
-            GetLatestDateOnFile();
+            GetLatestDateOnFile_CSV();
             System.Windows.Threading.Dispatcher.Run();
         }
 
         /// <summary>
+        /// Gets the latest known date of input data from the WHO csv file
+        /// Credit for original structure goes to: https://stackoverflow.com/a/3508572
+        /// </summary>
+        private void GetLatestDateOnFile_CSV()
+        {
+            using (TextFieldParser parser = new TextFieldParser(@_spreadsheetFilePath))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+
+                string[] fields;
+                Int16 month = 0;
+                Int16 cellMonth = 0;
+                Int16 day = 0;
+                Int16 cellDay = 0;
+                Int16 year = 0;
+                Int16 cellYear = 0;
+                string[] checkingDate = { "0", "0", "0" };
+                bool date_YearMonthDay = false;
+                bool date_MonthDayYear = false;
+                char delim = ' ';
+
+
+                // read first row to negate column titles
+                parser.ReadLine();
+
+
+                // Determine delimiter
+                fields = parser.ReadFields();
+                if (fields[0].Contains("/"))
+                {
+                    delim = '/';
+                    checkingDate = fields[0].Split("/");
+                }
+                else if (fields[0].Contains("-"))
+                {
+                    delim = '-';
+                    checkingDate = fields[0].Split("-");
+                }
+
+                // Determine date structure
+                if (checkingDate[0].Length == 2)
+                {
+                    date_MonthDayYear = true;
+                    month = Int16.Parse(checkingDate[0]);
+                    day = Int16.Parse(checkingDate[1]);
+                    day = Int16.Parse(checkingDate[2]);
+                }
+                else if (checkingDate[0].Length == 4)
+                {
+                    date_YearMonthDay = true;
+                    year = Int16.Parse(checkingDate[0]);
+                    month = Int16.Parse(checkingDate[1]);
+                    day = Int16.Parse(checkingDate[2]);
+                }
+
+
+
+                
+                while (!parser.EndOfData)
+                {
+                    //Processing row
+                    fields = parser.ReadFields();
+                    checkingDate = fields[0].Split(delim);
+
+                    if (date_MonthDayYear)
+                    {
+                        cellMonth = Int16.Parse(checkingDate[0]);
+                        cellDay = Int16.Parse(checkingDate[1]);
+                        cellYear = Int16.Parse(checkingDate[2]);
+                    }
+                    else if (date_YearMonthDay)
+                    {
+                        cellYear = Int16.Parse(checkingDate[0]);
+                        cellMonth = Int16.Parse(checkingDate[1]);
+                        cellDay = Int16.Parse(checkingDate[2]);
+                    }
+
+                    // if date is later than currently held last date, change
+                    if (cellYear > year)
+                    {
+                        year = cellYear;
+                        month = cellMonth;
+                        day = cellDay;
+                        continue;
+                    }
+                    else if (cellMonth > month)
+                    {
+                        month = cellMonth;
+                        day = cellDay;
+                        continue;
+                    }
+                    else if (cellMonth == month)
+                    {
+                        if (cellDay > day)
+                        {
+                            day = cellDay;
+                        }
+                    }
+                }
+
+                LatestDataEntryDate = String.Format("{0}/{1}/{2}", month, day, year);
+            }
+        }
+
+
+
+
+        /// <summary>
         /// Gets the lastest known date of input data from the excel spreadsheet
         /// </summary>
-        private void GetLatestDateOnFile()
+        private void GetLatestDateOnFile_Excel()
         {
             // create COM objects
             // helping credit to: https://coderwall.com/p/app3ya/read-excel-file-in-c
@@ -152,19 +262,24 @@ namespace CoroStats_BetaTest.ViewModels
 
             // parameters for calculations
             Excel.Range cell;
-            int year = 0;
-            int month = 0;
-            int day = 0;
+            Int16 month = 0;
+            Int16 cellMonth = 0;
+            Int16 day = 0;
+            Int16 cellDay = 0;
+            Int16 year = 0;
+            Int16 cellYear = 0;
+
+
 
             // read through rows and find the last known date
-            for (int i = 2; i <= rowCount; i++)
+            for (int i = 3; i <= rowCount; i++)
             {
                 cell = (Excel.Range)xlRange.Cells[i, 1];
                 string[] dateSplit1 = cell.Value.ToString().Split(" ");
                 string[] dateSplit2 = dateSplit1[0].Split("/");
-                int cellMonth = Int16.Parse(dateSplit2[0]);
-                int cellDay = Int16.Parse(dateSplit2[1]);
-                int cellYear = Int16.Parse(dateSplit2[2]);
+                cellMonth = Int16.Parse(dateSplit2[0]);
+                cellDay = Int16.Parse(dateSplit2[1]);
+                cellYear = Int16.Parse(dateSplit2[2]);
 
                 // if date is later than currently held last date, change
                 if (cellYear > year)
@@ -172,11 +287,13 @@ namespace CoroStats_BetaTest.ViewModels
                     year = cellYear;
                     month = cellMonth;
                     day = cellDay;
+                    continue;
                 }
                 else if (cellMonth > month)
                 {
                     month = cellMonth;
                     day = cellDay;
+                    continue;
                 }
                 else if (cellMonth == month)
                 {
@@ -185,6 +302,14 @@ namespace CoroStats_BetaTest.ViewModels
                         day = cellDay;
                     }
                 }
+
+
+
+
+
+
+
+
             }
 
 
@@ -200,6 +325,7 @@ namespace CoroStats_BetaTest.ViewModels
 
             xlApp.Quit();
             Marshal.ReleaseComObject(xlApp);
+
 
             LatestDataEntryDate = String.Format("{0}/{1}/{2}", month, day, year);
         }
