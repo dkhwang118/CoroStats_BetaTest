@@ -27,13 +27,14 @@ namespace CoroStats_BetaTest.Services
         #region Fields
 
         private string _spreadsheetFilePath;
+        public string _latestDate;
+        
 
         #endregion // Fields
 
 
         public string OpenSpreadsheetFileDialogue()
         {
-            string spreadsheetFilePath = "";
             OpenFileDialog fileDialog = new OpenFileDialog();
 
             if (fileDialog.ShowDialog() == true) _spreadsheetFilePath = fileDialog.FileName;
@@ -43,24 +44,26 @@ namespace CoroStats_BetaTest.Services
             // help from https://www.wpf-tutorial.com/dialogs/the-openfiledialog/
         }
 
-        public void GetLatestDateHandler()
+        public string GetLatestDateHandler()
         {
             Thread beginLoadingDateThread = new Thread(new ThreadStart(GetLatestDateThreadStartingPoint));
             beginLoadingDateThread.SetApartmentState(ApartmentState.STA);
             beginLoadingDateThread.IsBackground = true;
             beginLoadingDateThread.Start();
+
+            return _latestDate;
         }
 
         private void GetLatestDateThreadStartingPoint()
         {
-            GetLatestDateOnFile();
+            _latestDate = GetLatestDateOnFile();
             System.Windows.Threading.Dispatcher.Run();
         }
 
         /// <summary>
         /// Gets the lastest known date of input data from the excel spreadsheet
         /// </summary>
-        public void GetLatestDateOnFile()
+        private string GetLatestDateOnFile()
         {
             // create COM objects
             // helping credit to: https://coderwall.com/p/app3ya/read-excel-file-in-c
@@ -110,8 +113,6 @@ namespace CoroStats_BetaTest.Services
                 }
             }
 
-            // show latest date
-            MessageBox.Show("Latest Date is: " + month.ToString() + "/" + day.ToString() + "/" + year.ToString());
 
             // always dispose
             GC.Collect();
@@ -125,6 +126,8 @@ namespace CoroStats_BetaTest.Services
 
             xlApp.Quit();
             Marshal.ReleaseComObject(xlApp);
+
+            return String.Format("{0}/{1}/{2}", month, day, year);
         }
     }
 }
