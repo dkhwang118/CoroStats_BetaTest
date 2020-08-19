@@ -31,6 +31,8 @@ namespace CoroStats_BetaTest.ViewModels
         private bool _canOpenFile;
         private string _spreadsheetFilePath;
         private string _latestDataEntryDate;
+        private string _totalCumulativeCases;
+        private string _totalDeaths;
 
         #endregion // Fields
 
@@ -96,6 +98,20 @@ namespace CoroStats_BetaTest.ViewModels
             } 
         }
 
+        public string TotalCumulativeCases
+        {
+            get
+            {
+                if (_totalCumulativeCases == null) _totalCumulativeCases = "...";
+                return _totalCumulativeCases;
+            }
+            set
+            {
+                _totalCumulativeCases = value;
+                base.OnPropertyChanged("TotalCumulativeCases");
+            }
+        }
+
         #endregion // Presentation Properties
 
         #region Public Methods
@@ -132,11 +148,12 @@ namespace CoroStats_BetaTest.ViewModels
         private void GetLatestDateThreadStartingPoint()
         {
             GetLatestDateOnFile_CSV();
+            GetTotalCasesFromFile_CSV();
             System.Windows.Threading.Dispatcher.Run();
         }
 
         /// <summary>
-        /// Gets the latest known date of input data from the WHO csv file
+        /// Gets the latest known date of input data from the WHO csv file; CSV file reading format
         /// Credit for original structure goes to: https://stackoverflow.com/a/3508572
         /// </summary>
         private void GetLatestDateOnFile_CSV()
@@ -192,9 +209,7 @@ namespace CoroStats_BetaTest.ViewModels
                     day = Int16.Parse(checkingDate[2]);
                 }
 
-
-
-                
+                // parse through rest of date column
                 while (!parser.EndOfData)
                 {
                     //Processing row
@@ -236,16 +251,15 @@ namespace CoroStats_BetaTest.ViewModels
                         }
                     }
                 }
-
+                
+                // output latest date to UI TextBox
                 LatestDataEntryDate = String.Format("{0}/{1}/{2}", month, day, year);
             }
         }
 
 
-
-
         /// <summary>
-        /// Gets the lastest known date of input data from the excel spreadsheet
+        /// Gets the lastest known date of input data from the excel spreadsheet; Excel sheet reading format
         /// </summary>
         private void GetLatestDateOnFile_Excel()
         {
@@ -268,8 +282,6 @@ namespace CoroStats_BetaTest.ViewModels
             Int16 cellDay = 0;
             Int16 year = 0;
             Int16 cellYear = 0;
-
-
 
             // read through rows and find the last known date
             for (int i = 3; i <= rowCount; i++)
@@ -302,16 +314,7 @@ namespace CoroStats_BetaTest.ViewModels
                         day = cellDay;
                     }
                 }
-
-
-
-
-
-
-
-
             }
-
 
             // always dispose
             GC.Collect();
@@ -330,6 +333,55 @@ namespace CoroStats_BetaTest.ViewModels
             LatestDataEntryDate = String.Format("{0}/{1}/{2}", month, day, year);
         }
 
+        /// <summary>
+        /// Gets the total number of cases from the CSV spreadsheet
+        /// </summary>
+        private void GetTotalCasesFromFile_CSV()
+        {
+            using (TextFieldParser parser = new TextFieldParser(@_spreadsheetFilePath))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+
+                string[] fields;
+                int countryCases_previous = 0;
+                //int countryCases_current = 0;
+                //int currentCountryCases = 0;
+                int totalCumulativeCases = 0;
+                string country_previous = "";
+                string country_current = "";
+
+                // read first row to negate column titles
+                parser.ReadLine();
+
+                // read-in first entry
+                fields = parser.ReadFields();
+                country_previous = fields[2];
+
+                // parse through rest of date column
+                while (!parser.EndOfData)
+                {
+                    //Processing row
+
+                    // find highest number of cumulative cases reported for country
+                    fields = parser.ReadFields();
+
+                    // if previous data entry country is the same as the current
+                    if (country_previous == fields[2])
+                    {
+                        country_previous = fields[2];
+                        countryCases_previous = Int32.Parse(fields[5]);
+                    }
+                    else // hit end of country entries on the last pass
+                    {
+                        totalCumulativeCases += countryCases_previous;
+                        countryCases_previous = Int32.Parse(fields[5]);
+                        TotalCumulativeCases = String.Format("{0}", totalCumulativeCases);
+                    }
+                    country_previous = fields[2];
+                }
+            }
+        }
 
         #endregion // Public Methods
 
