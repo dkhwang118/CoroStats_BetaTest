@@ -18,7 +18,7 @@ using System.Windows.Input;
 
 namespace CoroStats_BetaTest.ViewModels
 {
-    public class ViewModel_Home : ViewModel_SelectedWindow
+    public class ViewModel_Home : ViewModelBase
     {
         public DateTime DateToday { get { return DateTime.Today; } }
         public DateTime DateNow { get { return DateTime.Now; } }

@@ -20,7 +20,7 @@ using CoroStats_BetaTest.Pages;
 
 namespace CoroStats_BetaTest.ViewModels
 {
-    class ViewModel_AddData : ViewModel_SelectedWindow
+    class ViewModel_AddData : ViewModelBase
     {
         #region Fields
 
