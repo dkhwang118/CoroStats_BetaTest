@@ -13,23 +13,31 @@ namespace CoroStats_BetaTest
     /// </summary>
 
     public class SqlConnectionServices
-    { 
-        /// <summary>
-        /// Sql Connection Object
-        /// </summary>
-        public SqlConnection Conn { get; set; }
+    {
+        #region fields
+
+        private SqlConnection _conn { get; set; }
+
         /// <summary>
         /// Sql connection string
         /// </summary>
-        private string connectionString { get; set; }
+        private string _connectionString { get; set; }
 
-        private string connectionMessage { get; set; }
+        private string _connectionMessage { get; set; }
 
-        
+        #endregion // Fields
+
+
+        #region Helper Functions
+
         private void connectionInfoMessage(object sender, SqlInfoMessageEventArgs e)
         {
-            connectionMessage = e.Message;
+            _connectionMessage = e.Message;
         }
+
+        #endregion // Helper Functions
+
+        #region Public Methods
 
         /// <summary>
         /// Opens the SqlConnection to the Database
@@ -37,11 +45,11 @@ namespace CoroStats_BetaTest
         public void OpenConnection()
         {
             // Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\David\source\repos\CoroStats_BetaTest\CoronaStatsDB.mdf;Integrated Secu
-            connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\David\\source\\repos\\CoroStats_BetaTest\\CoronaStatsDB.mdf;Integrated Security=True";
-            Conn = new SqlConnection(connectionString);
+            _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\David\\source\\repos\\CoroStats_BetaTest\\CoronaStatsDB.mdf;Integrated Security=True";
+            _conn = new SqlConnection(_connectionString);
             try
             {
-                Conn.Open();
+                _conn.Open();
             }
             catch (Exception ex)
             {
@@ -54,10 +62,8 @@ namespace CoroStats_BetaTest
         /// </summary>
         public void CloseConnection()
         {
-            Conn.Close();
+            _conn.Close();
         }
-
-        #region Public Methods
 
         /// <summary>
         /// Executes the stored database procedure 'dbo.InitializeDB', attempting to initialize the database with the base tables
@@ -65,20 +71,46 @@ namespace CoroStats_BetaTest
         /// <returns>bool if database has already been initialized</returns>
         public bool InitializeDB()
         {
-            using (var command = new SqlCommand("InitializeDB", Conn)
+            using (var command = new SqlCommand("InitializeDB", _conn)
             {
                 CommandType = CommandType.StoredProcedure
             })
             {
-                Conn.InfoMessage += new SqlInfoMessageEventHandler(connectionInfoMessage);
+                _conn.InfoMessage += new SqlInfoMessageEventHandler(connectionInfoMessage);
                 command.ExecuteNonQuery();
-                if (connectionMessage == "DB is not initialized")
+                if (_connectionMessage == "DB is not initialized")
                 {
                     return false;
                 }
                 else { return true; }
             }
         }
+
+        public bool CheckForInitializedDB()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string[] GetDates_SingleCountry()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Dictionary<string, string[]> GetDates_AllCountries()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddToDB_CountryInfo_SingleDate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddToDB_CountryInfo_MultipleDates()
+        {
+            throw new NotImplementedException();
+        }
+
 
         #endregion // Public Methods
     }

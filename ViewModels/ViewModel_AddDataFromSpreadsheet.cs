@@ -20,6 +20,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using System.Threading;
 using Microsoft.VisualBasic.FileIO;
+using CoroStats_BetaTest.Services;
 
 namespace CoroStats_BetaTest.ViewModels
 {
@@ -158,103 +159,14 @@ namespace CoroStats_BetaTest.ViewModels
         /// </summary>
         private void GetLatestDateOnFile_CSV()
         {
-            using (TextFieldParser parser = new TextFieldParser(@_spreadsheetFilePath))
-            {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
+            // instantiate parser service object
+            ExcelFileParsingService parser = new ExcelFileParsingService();
 
-                string[] fields;
-                Int16 month = 0;
-                Int16 cellMonth = 0;
-                Int16 day = 0;
-                Int16 cellDay = 0;
-                Int16 year = 0;
-                Int16 cellYear = 0;
-                string[] checkingDate = { "0", "0", "0" };
-                bool date_YearMonthDay = false;
-                bool date_MonthDayYear = false;
-                char delim = ' ';
+            // call method to get latest date 
+            Int16[] returnValues = parser.GetLatestDate_CSV(_spreadsheetFilePath);
 
-
-                // read first row to negate column titles
-                parser.ReadLine();
-
-
-                // Determine delimiter
-                fields = parser.ReadFields();
-                if (fields[0].Contains("/"))
-                {
-                    delim = '/';
-                    checkingDate = fields[0].Split("/");
-                }
-                else if (fields[0].Contains("-"))
-                {
-                    delim = '-';
-                    checkingDate = fields[0].Split("-");
-                }
-
-                // Determine date structure
-                if (checkingDate[0].Length == 2)
-                {
-                    date_MonthDayYear = true;
-                    month = Int16.Parse(checkingDate[0]);
-                    day = Int16.Parse(checkingDate[1]);
-                    day = Int16.Parse(checkingDate[2]);
-                }
-                else if (checkingDate[0].Length == 4)
-                {
-                    date_YearMonthDay = true;
-                    year = Int16.Parse(checkingDate[0]);
-                    month = Int16.Parse(checkingDate[1]);
-                    day = Int16.Parse(checkingDate[2]);
-                }
-
-                // parse through rest of date column
-                while (!parser.EndOfData)
-                {
-                    //Processing row
-                    fields = parser.ReadFields();
-                    checkingDate = fields[0].Split(delim);
-
-                    if (date_MonthDayYear)
-                    {
-                        cellMonth = Int16.Parse(checkingDate[0]);
-                        cellDay = Int16.Parse(checkingDate[1]);
-                        cellYear = Int16.Parse(checkingDate[2]);
-                    }
-                    else if (date_YearMonthDay)
-                    {
-                        cellYear = Int16.Parse(checkingDate[0]);
-                        cellMonth = Int16.Parse(checkingDate[1]);
-                        cellDay = Int16.Parse(checkingDate[2]);
-                    }
-
-                    // if date is later than currently held last date, change
-                    if (cellYear > year)
-                    {
-                        year = cellYear;
-                        month = cellMonth;
-                        day = cellDay;
-                        continue;
-                    }
-                    else if (cellMonth > month)
-                    {
-                        month = cellMonth;
-                        day = cellDay;
-                        continue;
-                    }
-                    else if (cellMonth == month)
-                    {
-                        if (cellDay > day)
-                        {
-                            day = cellDay;
-                        }
-                    }
-                }
-                
-                // output latest date to UI TextBox
-                LatestDataEntryDate = String.Format("{0}/{1}/{2}", month, day, year);
-            }
+            // output latest date to UI TextBox
+            LatestDataEntryDate = String.Format("{0}/{1}/{2}", returnValues[0], returnValues[1], returnValues[2]);
         }
 
 
@@ -263,74 +175,14 @@ namespace CoroStats_BetaTest.ViewModels
         /// </summary>
         private void GetLatestDateOnFile_Excel()
         {
-            // create COM objects
-            // helping credit to: https://coderwall.com/p/app3ya/read-excel-file-in-c
-            Excel.Application xlApp = new Excel.Application();
-            Excel.Workbook wkbk = xlApp.Workbooks.Open(@_spreadsheetFilePath);
-            Excel.Worksheet xlWorksheet = (Excel.Worksheet)wkbk.Worksheets[1];
-            Excel.Range xlRange = xlWorksheet.UsedRange;
+            // instantiate parser service object
+            ExcelFileParsingService parser = new ExcelFileParsingService();
 
-            // get ranges
-            int rowCount = xlRange.Rows.Count;
-            int colCount = xlRange.Columns.Count;
-
-            // parameters for calculations
-            Excel.Range cell;
-            Int16 month = 0;
-            Int16 cellMonth = 0;
-            Int16 day = 0;
-            Int16 cellDay = 0;
-            Int16 year = 0;
-            Int16 cellYear = 0;
-
-            // read through rows and find the last known date
-            for (int i = 3; i <= rowCount; i++)
-            {
-                cell = (Excel.Range)xlRange.Cells[i, 1];
-                string[] dateSplit1 = cell.Value.ToString().Split(" ");
-                string[] dateSplit2 = dateSplit1[0].Split("/");
-                cellMonth = Int16.Parse(dateSplit2[0]);
-                cellDay = Int16.Parse(dateSplit2[1]);
-                cellYear = Int16.Parse(dateSplit2[2]);
-
-                // if date is later than currently held last date, change
-                if (cellYear > year)
-                {
-                    year = cellYear;
-                    month = cellMonth;
-                    day = cellDay;
-                    continue;
-                }
-                else if (cellMonth > month)
-                {
-                    month = cellMonth;
-                    day = cellDay;
-                    continue;
-                }
-                else if (cellMonth == month)
-                {
-                    if (cellDay > day)
-                    {
-                        day = cellDay;
-                    }
-                }
-            }
-
-            // always dispose
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            Marshal.ReleaseComObject(xlRange);
-            Marshal.ReleaseComObject(xlWorksheet);
-
-            wkbk.Close();
-            Marshal.ReleaseComObject(wkbk);
-
-            xlApp.Quit();
-            Marshal.ReleaseComObject(xlApp);
+            // call method to get latest date 
+            Int16[] returnValues = parser.GetLatestDate_Excel(_spreadsheetFilePath);
 
 
-            LatestDataEntryDate = String.Format("{0}/{1}/{2}", month, day, year);
+            LatestDataEntryDate = String.Format("{0}/{1}/{2}", returnValues[0], returnValues[1], returnValues[2]);
         }
 
         /// <summary>
@@ -338,49 +190,13 @@ namespace CoroStats_BetaTest.ViewModels
         /// </summary>
         private void GetTotalCasesFromFile_CSV()
         {
-            using (TextFieldParser parser = new TextFieldParser(@_spreadsheetFilePath))
-            {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(",");
+            // instantiate parser service object
+            ExcelFileParsingService parser = new ExcelFileParsingService();
 
-                string[] fields;
-                int countryCases_previous = 0;
-                //int countryCases_current = 0;
-                //int currentCountryCases = 0;
-                int totalCumulativeCases = 0;
-                string country_previous = "";
-                string country_current = "";
+            // call method to get latest date 
+            int returnValue = parser.GetTotalCases_CSV(_spreadsheetFilePath);
 
-                // read first row to negate column titles
-                parser.ReadLine();
-
-                // read-in first entry
-                fields = parser.ReadFields();
-                country_previous = fields[2];
-
-                // parse through rest of date column
-                while (!parser.EndOfData)
-                {
-                    //Processing row
-
-                    // find highest number of cumulative cases reported for country
-                    fields = parser.ReadFields();
-
-                    // if previous data entry country is the same as the current
-                    if (country_previous == fields[2])
-                    {
-                        country_previous = fields[2];
-                        countryCases_previous = Int32.Parse(fields[5]);
-                    }
-                    else // hit end of country entries on the last pass
-                    {
-                        totalCumulativeCases += countryCases_previous;
-                        countryCases_previous = Int32.Parse(fields[5]);
-                        TotalCumulativeCases = String.Format("{0}", totalCumulativeCases);
-                    }
-                    country_previous = fields[2];
-                }
-            }
+            TotalCumulativeCases = String.Format("{0}", returnValue);
         }
 
         #endregion // Public Methods

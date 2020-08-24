@@ -35,7 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DatabaseScripts\" />
-    <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Strings.Designer.cs">
