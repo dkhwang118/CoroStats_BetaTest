@@ -5,6 +5,7 @@
 /// 
 ///     Contains Data/Variables to be shown on the Add Data page
 /// 
+///     Contains methods/logic to only have one data entry open at a time
 ///
 
 
@@ -24,10 +25,10 @@ namespace CoroStats_BetaTest.ViewModels
     {
         #region Fields
 
-        RelayCommand _command_AddDataManually;
-        RelayCommand _command_AddDataFromSpreadsheet;
-        Window _window_currentDataEntryWindow;
-        bool _canOpenNewView;
+        private RelayCommand _command_AddDataManually;
+        private RelayCommand _command_AddDataFromSpreadsheet;
+        private Window _window_currentDataEntryWindow;
+        private bool _canOpenNewView;
 
         #endregion // Fields
 
@@ -43,6 +44,9 @@ namespace CoroStats_BetaTest.ViewModels
 
         #region Presentation Properties
 
+        /// <summary>
+        /// Command to open View_AddDataManually when the button is clicked
+        /// </summary>
         public ICommand Command_AddDataManually
         {
             get
@@ -51,7 +55,7 @@ namespace CoroStats_BetaTest.ViewModels
                 {
                     _command_AddDataManually = new RelayCommand(
                         param => this.OpenManualDataEntryView(),
-                        param => this.CanOpenNewView
+                        param => this._canOpenNewView
                         );
                     
                 }
@@ -59,6 +63,9 @@ namespace CoroStats_BetaTest.ViewModels
             }
         }
 
+        /// <summary>
+        /// Command to open View_AddDataFromSpreadsheet when the AddDataFromSpreadsheet button is clicked
+        /// </summary>
         public ICommand Command_AddDataFromSpreadsheet
         {
             get
@@ -67,7 +74,7 @@ namespace CoroStats_BetaTest.ViewModels
                 {
                     _command_AddDataFromSpreadsheet = new RelayCommand(
                         param => this.OpenSpreadsheetDataEntryView(),
-                        param => this.CanOpenNewView
+                        param => this._canOpenNewView
                         );
 
                 }
@@ -79,6 +86,9 @@ namespace CoroStats_BetaTest.ViewModels
 
         #region Public Methods
 
+        /// <summary>
+        /// Method that opens the View_AddDataManually window
+        /// </summary>
         public void OpenManualDataEntryView()
         {
             _window_currentDataEntryWindow = new View_AddDataManually(OnWindowClose);
@@ -86,6 +96,9 @@ namespace CoroStats_BetaTest.ViewModels
             _window_currentDataEntryWindow.Show();
         }
 
+        /// <summary>
+        /// Method to open the View_AddDataFromSpreadsheet window
+        /// </summary>
         public void OpenSpreadsheetDataEntryView()
         {
             _window_currentDataEntryWindow = new View_AddDataFromSpreadsheet(OnWindowClose);
@@ -93,16 +106,13 @@ namespace CoroStats_BetaTest.ViewModels
             _window_currentDataEntryWindow.Show();
         }
 
+        /// <summary>
+        /// Method to be passed to newly opened windows, and called when the window closes
+        /// </summary>
         public void OnWindowClose()
         {
             _canOpenNewView = true;
         }
-
-        bool CanOpenNewView
-        {
-            get { return _canOpenNewView; }
-        }
-
         #endregion // Public Methods
     }
 }

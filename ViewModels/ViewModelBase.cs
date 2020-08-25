@@ -132,6 +132,7 @@ namespace CoroStats_BetaTest
         /// </summary>
         protected virtual void OnDispose()
         {
+            throw new NotImplementedException();
         }
 
 

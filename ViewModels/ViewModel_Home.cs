@@ -20,14 +20,10 @@ namespace CoroStats_BetaTest.ViewModels
 {
     public class ViewModel_Home : ViewModelBase
     {
+        #region Fields
+
         public DateTime DateToday { get { return DateTime.Today; } }
         public DateTime DateNow { get { return DateTime.Now; } }
-
-        public ViewModel_Home()
-        {
-            base.DisplayName = "Corona Stats - Home";
-
-        }
 
         private long _totalCases;
         public long TotalCases
@@ -36,17 +32,49 @@ namespace CoroStats_BetaTest.ViewModels
             set => SetProperty(ref _totalCases, value);
         }
 
+        private int _totalDeaths;
+
+        public int TotalDeaths
+        {
+            get => _totalDeaths;
+            set => SetProperty(ref _totalDeaths, value);
+        }
+
         private bool _dbIsInitialized;
         public bool DbIsInitialized
         {
             get => _dbIsInitialized;
             set => SetProperty(ref _dbIsInitialized, value);
         }
-        
-        
+
+        #endregion // Fields
+
+        #region Constructor
+
+        public ViewModel_Home()
+        {
+            // declare Display Name
+            base.DisplayName = "Corona Stats - Home";
+
+            // On Init, get total cases from db
+
+        }
+
+        #endregion // Constructor
+
+        #region Helper Methods
+
+        private void getTotalCases()
+        {
+
+        }
+
+        #endregion
+
+
 
 
     }
 
-    
+
 }

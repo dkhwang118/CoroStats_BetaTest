@@ -28,12 +28,13 @@ namespace CoroStats_BetaTest.ViewModels
     {
         #region Fields
 
-        RelayCommand _command_openSpreadsheetFile;
+        private RelayCommand _command_openSpreadsheetFile;
         private bool _canOpenFile;
         private string _spreadsheetFilePath;
         private string _latestDataEntryDate;
         private string _totalCumulativeCases;
-        private string _totalDeaths;
+        private string _totalCumulativeDeaths;
+        private ExcelFileParsingService _parser;
 
         #endregion // Fields
 
@@ -63,7 +64,7 @@ namespace CoroStats_BetaTest.ViewModels
                 if (_command_openSpreadsheetFile == null)
                 {
                     _command_openSpreadsheetFile = new RelayCommand(
-                        param => this.OpenSpreadsheetFileAndLoadDate(),
+                        param => this.OpenSpreadsheetFileAndLoadData(),
                         param => this._canOpenFile
                         );
                 }
@@ -80,9 +81,7 @@ namespace CoroStats_BetaTest.ViewModels
             }
             set
             {
-                _spreadsheetFilePath = value;
-                base.OnPropertyChanged("SpreadsheetFilePath");
-
+                SetProperty<string>(ref _spreadsheetFilePath, value);
             }
         }
         public string LatestDataEntryDate
@@ -94,8 +93,7 @@ namespace CoroStats_BetaTest.ViewModels
             }
             set 
             {
-                _latestDataEntryDate = value;
-                base.OnPropertyChanged("LatestDataEntryDate");
+                SetProperty<string>(ref _latestDataEntryDate, value);
             } 
         }
 
@@ -108,23 +106,56 @@ namespace CoroStats_BetaTest.ViewModels
             }
             set
             {
-                _totalCumulativeCases = value;
-                base.OnPropertyChanged("TotalCumulativeCases");
+                SetProperty<string>(ref _totalCumulativeCases, value);
+            }
+        }
+
+        public string TotalCumulativeDeaths
+        {
+            get
+            {
+                if (_totalCumulativeDeaths == null) _totalCumulativeDeaths = "...";
+                return _totalCumulativeDeaths;
+            }
+            set
+            {
+                SetProperty<string>(ref _totalCumulativeDeaths, value);
             }
         }
 
         #endregion // Presentation Properties
+
+        #region Multithreading Methods
+
+        private void GetMetadataHandler()
+        {
+            Thread beginLoadingDateThread = new Thread(new ThreadStart(GetDataThreadStartingPoint));
+            beginLoadingDateThread.SetApartmentState(ApartmentState.STA);
+            beginLoadingDateThread.IsBackground = true;
+            beginLoadingDateThread.Start();
+        }
+
+        private void GetDataThreadStartingPoint()
+        {
+            GetLatestDateOnFile_CSV();
+            GetTotalCasesOnFile_CSV();
+            System.Windows.Threading.Dispatcher.Run();
+        }
+
+        #endregion // Multithreading methods
 
         #region Public Methods
 
         /// <summary>
         /// Summons the OpenFileDialog to open the excel spreadsheet and loads the latest data entry date
         /// </summary>
-        public void OpenSpreadsheetFileAndLoadDate()
+        public void OpenSpreadsheetFileAndLoadData()
         {
             _spreadsheetFilePath = OpenSpreadsheetFileDialogue();
+            _parser = new ExcelFileParsingService();
             LatestDataEntryDate = "Loading Latest Data Entry Date...";
-            GetLatestDateHandler();
+            TotalCumulativeCases = "Calculating Total Cases To Date...";
+            GetMetadataHandler();
         }
 
         public string OpenSpreadsheetFileDialogue()
@@ -138,32 +169,15 @@ namespace CoroStats_BetaTest.ViewModels
             // help from https://www.wpf-tutorial.com/dialogs/the-openfiledialog/
         }
 
-        public void GetLatestDateHandler()
-        {
-            Thread beginLoadingDateThread = new Thread(new ThreadStart(GetLatestDateThreadStartingPoint));
-            beginLoadingDateThread.SetApartmentState(ApartmentState.STA);
-            beginLoadingDateThread.IsBackground = true;
-            beginLoadingDateThread.Start();
-        }
-
-        private void GetLatestDateThreadStartingPoint()
-        {
-            GetLatestDateOnFile_CSV();
-            GetTotalCasesFromFile_CSV();
-            System.Windows.Threading.Dispatcher.Run();
-        }
-
         /// <summary>
         /// Gets the latest known date of input data from the WHO csv file; CSV file reading format
         /// Credit for original structure goes to: https://stackoverflow.com/a/3508572
         /// </summary>
         private void GetLatestDateOnFile_CSV()
         {
-            // instantiate parser service object
-            ExcelFileParsingService parser = new ExcelFileParsingService();
 
             // call method to get latest date 
-            Int16[] returnValues = parser.GetLatestDate_CSV(_spreadsheetFilePath);
+            Int16[] returnValues = _parser.GetLatestDate_CSV(_spreadsheetFilePath);
 
             // output latest date to UI TextBox
             LatestDataEntryDate = String.Format("{0}/{1}/{2}", returnValues[0], returnValues[1], returnValues[2]);
@@ -175,11 +189,9 @@ namespace CoroStats_BetaTest.ViewModels
         /// </summary>
         private void GetLatestDateOnFile_Excel()
         {
-            // instantiate parser service object
-            ExcelFileParsingService parser = new ExcelFileParsingService();
 
             // call method to get latest date 
-            Int16[] returnValues = parser.GetLatestDate_Excel(_spreadsheetFilePath);
+            Int16[] returnValues = _parser.GetLatestDate_Excel(_spreadsheetFilePath);
 
 
             LatestDataEntryDate = String.Format("{0}/{1}/{2}", returnValues[0], returnValues[1], returnValues[2]);
@@ -188,13 +200,10 @@ namespace CoroStats_BetaTest.ViewModels
         /// <summary>
         /// Gets the total number of cases from the CSV spreadsheet
         /// </summary>
-        private void GetTotalCasesFromFile_CSV()
+        private void GetTotalCasesOnFile_CSV()
         {
-            // instantiate parser service object
-            ExcelFileParsingService parser = new ExcelFileParsingService();
-
             // call method to get latest date 
-            int returnValue = parser.GetTotalCases_CSV(_spreadsheetFilePath);
+            int returnValue = _parser.GetTotalCases_CSV(_spreadsheetFilePath);
 
             TotalCumulativeCases = String.Format("{0}", returnValue);
         }

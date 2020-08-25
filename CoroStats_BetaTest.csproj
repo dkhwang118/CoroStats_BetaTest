@@ -34,9 +34,6 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DatabaseScripts\" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Update="Properties\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

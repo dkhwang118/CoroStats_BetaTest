@@ -36,7 +36,7 @@
                 <HeaderedContentControl 
                   Content="{Binding Path=CurrentContent}"
                   ContentTemplate="{StaticResource RightWindowViewTemplate}"
-                  Header="{Binding Path=CurrentContentHeader}"
+                  Header="{Binding Path=CurrentContent.Content.DisplayName}"
                   Style="{StaticResource MainHCCStyle}"
                   />    
             </Border>

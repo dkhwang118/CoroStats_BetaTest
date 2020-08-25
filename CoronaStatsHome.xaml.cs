@@ -30,19 +30,19 @@ namespace CoroStats_BetaTest
             vm_Home.TotalCases = 0;
 
             // try to open SQL connection to retrieve base values to display on home screen
-            SqlConnectionServices sqlCon = new SqlConnectionServices();
+            SqlConnectionService sqlCon = new SqlConnectionService();
             sqlCon.OpenConnection();
 
-            // check if database has already been initialized
-            if (sqlCon.InitializeDB())
-            {
-                // do nothing; true => DB has already been initialized
-            }
-            else
-            {
-                // splash screen; tell user to input initial data
-                MessageBox.Show("Detected First Time Use: Please Input Data Through \n \t Settings --> Initialize Database");
-            }
+            //// check if database has already been initialized
+            //if (sqlCon.InitializeDB())
+            //{
+            //    // do nothing; true => DB has already been initialized
+            //}
+            //else
+            //{
+            //    // splash screen; tell user to input initial data
+            //    MessageBox.Show("Detected First Time Use: Please Input Data Through \n \t Settings --> Initialize Database");
+            //}
             
 
 

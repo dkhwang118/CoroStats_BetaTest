@@ -23,14 +23,14 @@ namespace CoroStats_BetaTest.Database_Classes
     {
         #region Fields
 
-        private SqlConnectionServices _sqlService;
+        private SqlConnectionService _sqlService;
         private ExcelFileParsingService _parser;
 
         #endregion // Fields
 
         #region Constructor
 
-        public ModifyDatabase_InputValues(SqlConnectionServices sqlService, ExcelFileParsingService parser)
+        public ModifyDatabase_InputValues(SqlConnectionService sqlService, ExcelFileParsingService parser)
         {
             _sqlService = sqlService;
             _parser = parser;
