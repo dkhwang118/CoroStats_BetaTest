@@ -26,7 +26,8 @@ AS
 			REFERENCES [dbo].[WHO_Region] (RegionId),
 			[Population] int,
 			[TotalCoronavirusCases] int NOT NULL,
-			[TotalCoronavirusDeaths] int NOT NULL
+			[TotalCoronavirusDeaths] int NOT NULL,
+			[TotalCoronavirusRecoveries] int
 		)
 
 		CREATE TABLE [dbo].[CountryRegion] (

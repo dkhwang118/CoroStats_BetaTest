@@ -95,12 +95,11 @@ namespace CoroStats_BetaTest.Services
                 SqlCommand command = new SqlCommand("Procedure_GetTotalCasesDeathsRecoveries", _connService.Conn);
                 command.CommandType = CommandType.StoredProcedure;
 
-                _connService.Conn.InfoMessage += new SqlInfoMessageEventHandler(_connService.ConnectionInfoMessage);
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        List<object> vals = readSingleRow((IDataRecord)reader);
+                        List<object> vals = ReadSingleRow((IDataRecord)reader);
                         values[(String)vals[1]] = (int)vals[2];
                     }
                 }
@@ -114,6 +113,37 @@ namespace CoroStats_BetaTest.Services
             _connService.CloseConnection();
 
             return values;
+        }
+
+        public int GetWHO_Region(string WHO_region)
+        {
+            Object value = 0;
+
+            _connService.OpenConnection();
+
+            try
+            {
+                SqlCommand command = new SqlCommand("Procedure_SearchFor_WHO_Region", _connService.Conn);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@WHO_Region", WHO_region);
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                            value = ReadSingleValue((IDataRecord)reader);  
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return (int)value;
         }
 
         #endregion // Public Methods
@@ -131,7 +161,7 @@ namespace CoroStats_BetaTest.Services
             return tables.Rows.Count;
         }
 
-        private List<Object> readSingleRow(IDataRecord data)
+        private List<Object> ReadSingleRow(IDataRecord data)
         {
             List<Object> values = new List<Object>();
             for (int i = 0; i < data.FieldCount; i++)
@@ -140,6 +170,11 @@ namespace CoroStats_BetaTest.Services
             }
 
             return values;
+        }
+
+        private Object ReadSingleValue(IDataRecord data)
+        {
+            return data[0];
         }
 
         #endregion // Helper Methods

@@ -9,7 +9,7 @@
 
 AS
 
-	INSERT INTO [dbo].CountryCountryInfo (CountryCode, [Name], WHO_RegionId, TotalCoronavirusCases, TotalCoronavirusDeaths)
+	INSERT INTO [dbo].CountryInfo (CountryCode, [Name], WHO_RegionId, TotalCoronavirusCases, TotalCoronavirusDeaths)
 	VALUES (@CountryCode, @Name, @WHO_RegionId, @TotalCoronavirusCases, @TotalCoronavirusDeaths)
 
 RETURN 0

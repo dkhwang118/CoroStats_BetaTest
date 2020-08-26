@@ -195,13 +195,15 @@ namespace CoroStats_BetaTest.Services
 
         public void AddToDB_CountryInfo_SingleDate()
         {
-            _connService.OpenConnection();
+            throw new NotImplementedException();
         }
 
         public void AddToDB_NewCountryInfo_NoPopulation(string countryCode, string countryName,
                                                         int WHO_regionId, int totalCoronaCases, 
                                                         int totalCoronaDeaths)
         {
+            _connService.OpenConnection();
+
             // Parameterized query string
             try
             {
@@ -214,11 +216,38 @@ namespace CoroStats_BetaTest.Services
                     command.Parameters.AddWithValue("@Name", countryName);
                     command.Parameters.AddWithValue("@WHO_RegionId", WHO_regionId);
                     command.Parameters.AddWithValue("@TotalCoronavirusCases", totalCoronaCases);
-                    command.Parameters.AddWithValue("@TotalCoronavirusDeaths", totalCoronaCases);
+                    command.Parameters.AddWithValue("@TotalCoronavirusDeaths", totalCoronaDeaths);
 
-                    _connService.OpenConnection();
                     command.ExecuteNonQuery();
 
+
+                    MessageBox.Show(String.Format("{0}'s Information Successfully Added!", countryName));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+                MessageBox.Show(String.Format("Failed To Add {0}'s Information", countryName));
+            }
+
+            _connService.CloseConnection();
+
+        }
+
+        public int AddToDB_WHO_Region_ReturnRegionId(string WHO_region)
+        {
+            _connService.OpenConnection();
+            int regionId = 0;
+
+            try
+            {
+                using (var command = new SqlCommand("Procedure_AddWHO_Region_Return_RegionId", _connService.Conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                })
+                {
+                    command.Parameters.AddWithValue("@WHO_Region", WHO_region);
+                    regionId = (int)command.ExecuteScalar();
                 }
             }
             catch (Exception ex)
@@ -226,6 +255,9 @@ namespace CoroStats_BetaTest.Services
                 MessageBox.Show(ex.Message.ToString());
             }
 
+            _connService.CloseConnection();
+
+            return regionId;
         }
 
         public void AddToDB_CountryInfo_MultipleDates()
@@ -235,5 +267,9 @@ namespace CoroStats_BetaTest.Services
 
 
         #endregion // Public Methods
+
+        #region Helper Methods
+
+        #endregion // Helper Methods
     }
 }

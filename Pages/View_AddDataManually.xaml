@@ -4,8 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CoroStats_BetaTest.Pages"
+        xmlns:localViewModels="clr-namespace:CoroStats_BetaTest.ViewModels"
         mc:Ignorable="d"
         Title="View_AddDataManually" Height="450" Width="800" Closed="View_AddDataManually_Closed">
+    <Window.DataContext>
+        <localViewModels:ViewModel_AddDataManually />
+    </Window.DataContext>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40" />
@@ -25,13 +30,29 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="1" Grid.Row="1" Content="Country Name:" HorizontalAlignment="Right"/>
-        <TextBox Grid.Column="2" Grid.Row="1" Text="" />
+        <Label Grid.Column="1" Grid.Row="1" Content="Country Name:" HorizontalAlignment="Right" Padding="0,0,10,0"/>
+        <TextBox Name="TextBox_CountryName" Grid.Column="2" Grid.Row="1" Text="{Binding Path=CountryName}" />
 
-        <Label Grid.Column="1" Grid.Row="3" Content="WHO Country Code:" />
-        <TextBox Grid.Column="2" Grid.Row="1" Text="" />
+        <Label Grid.Column="1" Grid.Row="3" Content="WHO Country Code:" HorizontalAlignment="Right" Padding="0,0,10,0"/>
+        <TextBox Name="TextBox_CountryCode" Grid.Column="2" Grid.Row="3" Text="{Binding Path=WHO_CountryCode}" />
+
+        <Label Grid.Column="1" Grid.Row="5" Content="WHO Region:" HorizontalAlignment="Right" Padding="0,0,10,0"/>
+        <TextBox Name="TextBox_RegionId" Grid.Column="2" Grid.Row="5" Text="{Binding Path=WHO_Region}" />
+
+        <Label Grid.Column="1" Grid.Row="7" Content="Total Coronavirus Cases In Country:" HorizontalAlignment="Right" Padding="0,0,10,0"/>
+        <TextBox Name="TextBox_TotalCases" Grid.Column="2" Grid.Row="7" Text="{Binding Path=TotalCoronavirusCases}" />
+
+        <Label Grid.Column="1" Grid.Row="9" Content="Total Coronavirus Deaths In Country:" HorizontalAlignment="Right" Padding="0,0,10,0"/>
+        <TextBox Name="TextBox_TotalDeaths" Grid.Column="2" Grid.Row="9" Text="{Binding Path=TotalCoronavirusDeaths}" />
+
+        <Button Grid.Column="4" Grid.Row="12" Content="Add Data To Database" Command="{Binding Path=Command_AddCountryDataToDB}" />
+
 
     </Grid>
 </Window>
