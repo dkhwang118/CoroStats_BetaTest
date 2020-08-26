@@ -72,7 +72,7 @@ namespace CoroStats_BetaTest.Services
             }
             else // if database does not exist => inform user that it will be created and initialized
             {
-                MessageBox.Show("Database not found. \n\n Database Initialization will begin.", "Corona Statistics Database Helper");
+                MessageBox.Show("Database not found. \n\nDatabase Initialization will begin.", "Corona Statistics Database Helper");
 
                 // Create DB
                 _modService.CreateDatabase();
