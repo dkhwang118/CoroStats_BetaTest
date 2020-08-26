@@ -80,9 +80,37 @@ namespace CoroStats_BetaTest.Services
             }
         }
 
-        public int GetTotalCases()
+        public int[] GetTotalCasesDeathsRecoveries()
         {
-            throw new NotImplementedException();
+            int[] values = new int[3];
+            int index = 0;
+
+            _connService.OpenConnection();
+
+            try
+            {
+                SqlCommand command = new SqlCommand("Procedure_GetTotalCasesDeathsRecoveries", _connService.Conn);
+                command.CommandType = CommandType.StoredProcedure;
+
+                _connService.Conn.InfoMessage += new SqlInfoMessageEventHandler(_connService.ConnectionInfoMessage);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        values[index] = Int32.Parse(reader[index].ToString());
+                        index++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Corona Statistics Database Helper");
+            }
+
+            // Close Connection
+            _connService.CloseConnection();
+
+            return values;
         }
 
         #endregion // Public Methods
