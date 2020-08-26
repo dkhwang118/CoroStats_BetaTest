@@ -19,20 +19,22 @@ namespace CoroStats_BetaTest.ViewModels
         private ContentControl _currentContent;
         private Dictionary<string, ViewModelBase> _viewModelStore;
         private SqlConnectionService _connService;
-        public DatabaseModificationService _modService;
         private DatabaseIntegrityService _integrityService;
+        public DatabaseQueryService qService;
+        public DatabaseModificationService modService;
 
         #endregion // Fields
 
         #region Constructor
-        
+
         public ViewModel_MainWindow()
         {
             base.DisplayName = "MainWindow - Home";
             _viewModelStore = new Dictionary<string, ViewModelBase>();
             _connService = new SqlConnectionService();
-            _modService = new DatabaseModificationService(_connService);
-            _integrityService = new DatabaseIntegrityService(_connService, _modService);
+            qService = new DatabaseQueryService(_connService);
+            modService = new DatabaseModificationService(_connService);
+            _integrityService = new DatabaseIntegrityService(_connService, qService, modService);
 
             // Databse Integrity Check => If database isn't present, creates new database file
             _integrityService.DatabaseCheckOnStartup();

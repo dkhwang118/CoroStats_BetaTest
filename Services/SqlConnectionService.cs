@@ -147,27 +147,12 @@ namespace CoroStats_BetaTest
             }
         }
 
-        public bool CheckForInitializedDB()
-        {
-            throw new NotImplementedException();
-        }
-
         public string[] GetDates_SingleCountry()
         {
             throw new NotImplementedException();
         }
 
         public Dictionary<string, string[]> GetDates_AllCountries()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddToDB_CountryInfo_SingleDate()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddToDB_CountryInfo_MultipleDates()
         {
             throw new NotImplementedException();
         }

@@ -193,6 +193,16 @@ namespace CoroStats_BetaTest.Services
 
         }
 
+        public void AddToDB_CountryInfo_SingleDate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddToDB_CountryInfo_MultipleDates()
+        {
+            throw new NotImplementedException();
+        }
+
 
         #endregion // Public Methods
     }

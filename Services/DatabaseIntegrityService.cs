@@ -21,17 +21,20 @@ namespace CoroStats_BetaTest.Services
     {
         #region Fields
 
-        SqlConnectionService _connService;
+        private SqlConnectionService _connService;
 
-        DatabaseModificationService _modService;
+        private DatabaseQueryService _qService;
+
+        private DatabaseModificationService _modService;
 
         #endregion // Fields
 
         #region Constructor
 
-        public DatabaseIntegrityService(SqlConnectionService connService, DatabaseModificationService modService)
+        public DatabaseIntegrityService(SqlConnectionService connService, DatabaseQueryService _qService, DatabaseModificationService modService)
         {
             this._connService = connService;
+            this._qService = _qService;
             this._modService = modService;
         }
 
@@ -45,9 +48,9 @@ namespace CoroStats_BetaTest.Services
             if (databaseIsPresent())
             {
                 // Check if stored procedures are present
-                if (storedProceduresLoaded())
+                if (_qService.StoredProceduresLoaded())
                 {
-                    int numTables = getNumberOfTablesInDatabase();
+                    int numTables = _qService.GetNumberOfTablesInDatabase();
                     // Check if stored procedures have created the tables
                     if (numTables == 8)
                     {
@@ -93,37 +96,6 @@ namespace CoroStats_BetaTest.Services
             }
             else return false;
         }
-
-        private bool storedProceduresLoaded()
-        {
-            // help on checking if the stored procedure exists: https://stackoverflow.com/a/13797842
-
-            string query = "select * from sysobjects where type='P'";
-            int storedProcedureCount = Directory.GetFiles(_connService.StoredProcedureDirectory).Length;
-            int numOfFiles = 0;
-
-            using (SqlCommand command = new SqlCommand(query, _connService.Conn))
-            { 
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        numOfFiles++;
-                    }
-                }
-            }
-
-            if (storedProcedureCount == numOfFiles) return true;
-            else return false;
-        }
-
-        private int getNumberOfTablesInDatabase()
-        {
-            DataTable tables = _connService.Conn.GetSchema("Tables");
-
-            return tables.Rows.Count;
-        }
-
         #endregion // Helper Methods
     }
 }
