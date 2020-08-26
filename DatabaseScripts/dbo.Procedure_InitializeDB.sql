@@ -1,14 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[Procedure_InitializeDB]
-	@settingsParam1 int = 0,
-	@settingsParam2 varchar(50) = FirstTimeStartup,
-	@settingsParam3 int = 0
+
 AS
-	IF OBJECT_ID (N'dbo.Settings', N'U') IS NOT NULL
-	BEGIN
-		PRINT 'DB is initialized'
-	END
-	ELSE
-	BEGIN
+
 		PRINT 'DB is not initialized'
 		/* Initialize DB with tables and base values */
 		CREATE TABLE [dbo].[Settings] (
@@ -53,10 +46,10 @@ AS
 
 		CREATE TABLE [dbo].[NewCoronavirusCasesByDate] (
 			[CountryId] int NOT NULL,
-			CONSTRAINT FK_CountryInfo_NewCoronavirusCasesByDate_CountryId FOREIGN KEY (CountryId)
+			CONSTRAINT FK_NewCoronavirusCasesByDate_CountryInfo_CountryId FOREIGN KEY (CountryId)
 			REFERENCES [dbo].[CountryInfo] (CountryId),
 			[DateId] int NOT NULL,
-			CONSTRAINT FK_CoronavirusDate_NewCoronavirusCasesByDate_DateId FOREIGN KEY (DateId)
+			CONSTRAINT FK_NewCoronavirusCasesByDate_CoronavirusDate_DateId FOREIGN KEY (DateId)
 			REFERENCES [dbo].[CoronavirusDate] (DateId),
 			CONSTRAINT PK_NewCoronavirusCasesByDate_CountryId_DateId PRIMARY KEY CLUSTERED (CountryId, DateId),
 			[NewCases] int NOT NULL
@@ -64,12 +57,12 @@ AS
 
 		CREATE TABLE [dbo].[NewCoronavirusDeathsByDate] (
 			[CountryId] int NOT NULL,
-			CONSTRAINT FK_CountryInfo_NewCoronavirusDeathsByDate_CountryId FOREIGN KEY (CountryId)
+			CONSTRAINT FK_NewCoronavirusDeathsByDate_CountryInfo_CountryId FOREIGN KEY (CountryId)
 			REFERENCES [dbo].[CountryInfo] (CountryId),
 			[DateId] int NOT NULL,
-			CONSTRAINT FK_CoronavirusDate_NewCoronavirusDeathsByDate_DateId FOREIGN KEY (DateId)
+			CONSTRAINT FK_NewCoronavirusDeathsByDate_CoronavirusDate_DateId FOREIGN KEY (DateId)
 			REFERENCES [dbo].[CoronavirusDate] (DateId),
-			CONSTRAINT PK_NewCoronavirusCasesByDate_CountryId_DateId PRIMARY KEY CLUSTERED (CountryId, DateId),
+			CONSTRAINT PK_NewCoronavirusDeathsByDate_CountryId_DateId PRIMARY KEY CLUSTERED (CountryId, DateId),
 			[NewDeaths] int NOT NULL
 		)
 
@@ -81,6 +74,5 @@ AS
 			[TotalCoronavirusRecoveredCases] int
 		)
 
-
-	END	
+	
 RETURN 0

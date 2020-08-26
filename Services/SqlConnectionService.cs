@@ -59,16 +59,6 @@ namespace CoroStats_BetaTest
 
         #endregion // Constructor
 
-
-        #region Helper Functions
-
-        private void connectionInfoMessage(object sender, SqlInfoMessageEventArgs e)
-        {
-            _connectionMessage = e.Message;
-        }
-
-        #endregion // Helper Functions
-
         #region Public Methods
 
         /// <summary>
@@ -81,15 +71,15 @@ namespace CoroStats_BetaTest
 
             String str;
             //string _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=master; AttachDbFilename=" + projectDirectory + "\\CoronaSstatsDB2.mdf; Integrated Security=True;";
-            string _createDatabaseConnString = String.Format("Data Source=(LocalDB)\\MSSQLLocalDB;Integrated Security=True; database=master");
+            string _createDatabaseConnString = String.Format("Integrated Security=True; Data Source=(LocalDB)\\MSSQLLocalDB; database=master");
             _conn = new SqlConnection(_createDatabaseConnString);
 
             str = "CREATE DATABASE CoronaStatsDB ON PRIMARY " +
                 "(NAME = CoronaStatsDB_Data, " +
                 "FILENAME = '" + _projectDirectory + "\\CoronaStatsDB.mdf', " +
-                "SIZE = 10MB, MAXSIZE = 2048MB, FILEGROWTH = 10%) " +
+                "SIZE = 10MB, MAXSIZE = 512MB, FILEGROWTH = 10%) " +
                 "LOG ON (NAME = CoronaStatsDB_log, " +
-                "FILENAME = '" + _projectDirectory + "\\CoronaStatsDBLog.ldf', " +
+                "FILENAME = '" + _projectDirectory + "\\CoronaStatsDB_log.ldf', " +
                 "SIZE = 1MB, " +
                 "MAXSIZE = 5MB, " +
                 "FILEGROWTH = 10%)";
@@ -105,6 +95,11 @@ namespace CoroStats_BetaTest
                 MessageBox.Show(ex.ToString(), "Corona Statistics Database Helper");
             }
             _conn.Close();
+            _conn.Dispose();
+
+            // Change _connection string to reflect new database connection
+            _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + _projectDirectory + "\\CoronaStatsDB.mdf;Integrated Security=True";
+            _conn = new SqlConnection(_connectionString);
         }
         
 
@@ -114,7 +109,7 @@ namespace CoroStats_BetaTest
         public void OpenConnection()
         {
             // Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\David\source\repos\CoroStats_BetaTest\CoronaStatsDB.mdf;Integrated Secu
-            //_connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + projectDirectory + "\\CoronaSstatsDB2.mdf;Integrated Security=True";
+            //_connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + _projectDirectory + "\\CoronaSstatsDB2.mdf;Integrated Security=True";
             _conn = new SqlConnection(_connectionString);
             try
             {
@@ -213,6 +208,22 @@ namespace CoroStats_BetaTest
 
         private void deleteDatabaseTables()
         {
+            // remove all constraints
+            string str = "EXEC sp_msforeachtable \"ALTER TABLE ? NOCHECK CONSTRAINT all\"";
+
+            SqlCommand myCommand = new SqlCommand(str, _conn);
+            try
+            {
+                _conn.Open();
+                myCommand.ExecuteNonQuery();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Corona Statistics Database Helper");
+            }
+            _conn.Close();
+
+
             using (var command = new SqlCommand("Procedure_DeleteAllTables", _conn)
             {
                 CommandType = CommandType.StoredProcedure
@@ -250,13 +261,19 @@ namespace CoroStats_BetaTest
             throw new NotImplementedException();
         }
 
-        
+
 
 
 
         #endregion // Public Methods
 
         #region Helper Methods
+
+        private void connectionInfoMessage(object sender, SqlInfoMessageEventArgs e)
+        {
+            _connectionMessage = e.Message;
+        }
+
         private bool databaseIsPresent()
         {
             if (File.Exists(_databaseFilePath))
@@ -273,10 +290,11 @@ namespace CoroStats_BetaTest
             // help creating the stored procedure to delete all tables: https://stackoverflow.com/a/43128914
 
 
-            foreach (string fileName in Directory.GetFiles(_baseDirectory + "\\DatabaseScripts")){
+            foreach (string fileName in Directory.GetFiles(_baseDirectory + "\\DatabaseScripts"))
+            {
                 // read text from stored procedure file
                 StringBuilder sbStoredProcedure = new StringBuilder();
-                StreamReader stream = File.OpenText(_baseDirectory + "\\DatabaseScripts\\" + fileName);
+                StreamReader stream = File.OpenText(fileName);
                 string s = "";
 
                 while ((s = stream.ReadLine()) != null)
@@ -291,17 +309,14 @@ namespace CoroStats_BetaTest
                         _conn.Open();
                         cmd.CommandType = CommandType.Text;
                         cmd.ExecuteNonQuery();
-                        _conn.Close();
+                        
                     }
                 }
                 catch (Exception e)
                 {
                     MessageBox.Show(e.Message.ToString());
                 }
-
-
-
-
+                _conn.Close();
 
             }
         }
@@ -310,7 +325,7 @@ namespace CoroStats_BetaTest
         {
             // help on checking if the stored procedure exists: https://stackoverflow.com/a/13797842
 
-            string query = "select * from sysobjects where type='P' and name='InitializeDB'";
+            string query = "select * from sysobjects where type='P'";
             int storedProcedureCount = Directory.GetFiles(_baseDirectory + "\\DatabaseScripts").Length;
             int numOfFiles = 0;
 
