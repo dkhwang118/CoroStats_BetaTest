@@ -19,6 +19,8 @@ namespace CoroStats_BetaTest.ViewModels
         private ContentControl _currentContent;
         private Dictionary<string, ViewModelBase> _viewModelStore;
         private SqlConnectionService _connService;
+        public DatabaseModificationService _modService;
+        private DatabaseIntegrityService _integrityService;
 
         #endregion // Fields
 
@@ -29,11 +31,12 @@ namespace CoroStats_BetaTest.ViewModels
             base.DisplayName = "MainWindow - Home";
             _viewModelStore = new Dictionary<string, ViewModelBase>();
             _connService = new SqlConnectionService();
+            _modService = new DatabaseModificationService(_connService);
+            _integrityService = new DatabaseIntegrityService(_connService, _modService);
 
-
-            initializeDatabase();
+            // Databse Integrity Check => If database isn't present, creates new database file
+            _integrityService.DatabaseCheckOnStartup();
             
-
         }
 
         #endregion // Constructor
@@ -109,22 +112,6 @@ namespace CoroStats_BetaTest.ViewModels
         #endregion // Left Menu Commands
 
         #region Helper Methods
-
-        private void DatabaseInitialization()
-        {
-            _connService.InitializeDB();
-        }
-
-
-        private void createDatabase()
-        {
-            _connService.CreateDatabase();
-        }
-
-        private void initializeDatabase()
-        {
-            _connService.InitializeDB();
-        }
 
         #endregion // Helper Methods
 

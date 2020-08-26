@@ -37,39 +37,37 @@ namespace CoroStats_BetaTest.Services
 
         #endregion // Constructor
 
+        #region Public Methods
+
         public void DatabaseCheckOnStartup()
         {
             // Check if database exists
             if (databaseIsPresent())
             {
-                // Open connection
-                _connService.OpenConnection();
-
                 // Check if stored procedures are present
-                if (StoredProceduresLoaded())
+                if (storedProceduresLoaded())
                 {
-                    int numTables = numberOfTablesInDatabase();
+                    int numTables = getNumberOfTablesInDatabase();
                     // Check if stored procedures have created the tables
                     if (numTables == 8)
                     {
                         // if here. DB is initialized and tables are present
-
                     }
                     else if (numTables > 0)
                     {
                         // Creation of tables went wrong => delete all tables and create new ones
-                        deleteDatabaseTables();
-                        createDatabseTables();
+                        _modService.DeleteDatabaseTables();
+                        _modService.CreateDatabseTables();
                     }
                     else
                     {
-                        createDatabseTables();
+                        _modService.CreateDatabseTables();
                     }
                 }
                 else
                 {
-                    loadStoredProceduresToDatabase();
-                    createDatabseTables();
+                    _modService.LoadStoredProceduresToDatabase();
+                    _modService.CreateDatabseTables();
                 }
             }
             else // if database does not exist => inform user that it will be created and initialized
@@ -77,11 +75,13 @@ namespace CoroStats_BetaTest.Services
                 MessageBox.Show("Database not found. \n\n Database Initialization will begin.", "Corona Statistics Database Helper");
 
                 // Create DB
-                CreateDatabase();
-                loadStoredProceduresToDatabase();
-                createDatabseTables();
+                _modService.CreateDatabase();
+                _modService.LoadStoredProceduresToDatabase();
+                _modService.CreateDatabseTables();
             }
         }
+
+        #endregion // Public Methods
 
         #region Helper Methods
 
@@ -103,8 +103,7 @@ namespace CoroStats_BetaTest.Services
             int numOfFiles = 0;
 
             using (SqlCommand command = new SqlCommand(query, _connService.Conn))
-            {
-                _conn.Open();
+            { 
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -112,11 +111,17 @@ namespace CoroStats_BetaTest.Services
                         numOfFiles++;
                     }
                 }
-                _conn.Close();
             }
 
             if (storedProcedureCount == numOfFiles) return true;
             else return false;
+        }
+
+        private int getNumberOfTablesInDatabase()
+        {
+            DataTable tables = _connService.Conn.GetSchema("Tables");
+
+            return tables.Rows.Count;
         }
 
         #endregion // Helper Methods
