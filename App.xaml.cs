@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using CoroStats_BetaTest.ViewModels;
+using CoroStats_BetaTest.Services;
 
 namespace CoroStats_BetaTest
 {
@@ -19,11 +20,13 @@ namespace CoroStats_BetaTest
         {
             base.OnStartup(e);
 
-            MainWindow window = new MainWindow();
+            SqlConnectionService connService = new SqlConnectionService();
+
+            MainWindow window = new MainWindow(connService);
 
             // Create the ViewModel to which 
             // the main window binds.
-            var viewModel = new ViewModel_MainWindow();
+            var viewModel = new ViewModel_MainWindow(connService);
 
             // Allow all controls in the window to 
             // bind to the ViewModel by setting the 

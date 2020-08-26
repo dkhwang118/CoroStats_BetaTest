@@ -27,11 +27,11 @@ namespace CoroStats_BetaTest.ViewModels
 
         #region Constructor
 
-        public ViewModel_MainWindow()
+        public ViewModel_MainWindow(SqlConnectionService connService)
         {
             base.DisplayName = "MainWindow - Home";
             _viewModelStore = new Dictionary<string, ViewModelBase>();
-            _connService = new SqlConnectionService();
+            _connService = connService;
             qService = new DatabaseQueryService(_connService);
             modService = new DatabaseModificationService(_connService);
             _integrityService = new DatabaseIntegrityService(_connService, qService, modService);

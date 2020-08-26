@@ -21,9 +21,17 @@ namespace CoroStats_BetaTest
     /// </summary>
     public partial class MainWindow 
     {
-        public MainWindow()
+        private SqlConnectionService _connService;
+
+        public MainWindow(SqlConnectionService connService)
         {
+            _connService = connService;
             InitializeComponent();
+        }
+
+        private void OnApplicationClose(object sender, EventArgs e)
+        {
+            _connService.Conn.Dispose();
         }
     }
 }

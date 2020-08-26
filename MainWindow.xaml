@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:CoroStats_BetaTest="clr-namespace:CoroStats_BetaTest"
         xmlns:vm="clr-namespace:CoroStats_BetaTest.ViewModels"
-        Title="CoroStats - Overview" Height="450" Width="800">
+        Title="CoroStats - Overview" Height="450" Width="800" Closed="OnApplicationClose">
     <Window.Resources>
         <ResourceDictionary Source="MainWindowResources.xaml" />
     </Window.Resources>
