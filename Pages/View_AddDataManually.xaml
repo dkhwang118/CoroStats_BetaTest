@@ -8,19 +8,30 @@
         Title="View_AddDataManually" Height="450" Width="800" Closed="View_AddDataManually_Closed">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="40" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Column="1" Grid.Row="2" Text="AddDataManually Window" />
+        <Label Grid.Column="1" Grid.Row="1" Content="Country Name:" HorizontalAlignment="Right"/>
+        <TextBox Grid.Column="2" Grid.Row="1" Text="" />
+
+        <Label Grid.Column="1" Grid.Row="3" Content="WHO Country Code:" />
+        <TextBox Grid.Column="2" Grid.Row="1" Text="" />
+
     </Grid>
 </Window>

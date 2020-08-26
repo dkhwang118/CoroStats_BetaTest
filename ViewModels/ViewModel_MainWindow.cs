@@ -114,6 +114,11 @@ namespace CoroStats_BetaTest.ViewModels
 
         #region Helper Methods
 
+        private void OnApplicationClose()
+        {
+            _connService.Conn.Dispose();
+        }
+
         #endregion // Helper Methods
 
 

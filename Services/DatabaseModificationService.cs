@@ -195,7 +195,37 @@ namespace CoroStats_BetaTest.Services
 
         public void AddToDB_CountryInfo_SingleDate()
         {
-            throw new NotImplementedException();
+            _connService.OpenConnection();
+        }
+
+        public void AddToDB_NewCountryInfo_NoPopulation(string countryCode, string countryName,
+                                                        int WHO_regionId, int totalCoronaCases, 
+                                                        int totalCoronaDeaths)
+        {
+            // Parameterized query string
+            try
+            {
+                using (var command = new SqlCommand("Procedure_AddCountryInfo_SingleRow_NoPop", _connService.Conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                })
+                {
+                    command.Parameters.AddWithValue("@CountryCode", countryCode);
+                    command.Parameters.AddWithValue("@Name", countryName);
+                    command.Parameters.AddWithValue("@WHO_RegionId", WHO_regionId);
+                    command.Parameters.AddWithValue("@TotalCoronavirusCases", totalCoronaCases);
+                    command.Parameters.AddWithValue("@TotalCoronavirusDeaths", totalCoronaCases);
+
+                    _connService.OpenConnection();
+                    command.ExecuteNonQuery();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
         }
 
         public void AddToDB_CountryInfo_MultipleDates()
