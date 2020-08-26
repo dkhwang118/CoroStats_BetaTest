@@ -142,6 +142,7 @@ namespace CoroStats_BetaTest
                     if (numTables == 8)
                     {
                         // if here. DB is initialized and tables are present
+
                     }
                     else if (numTables > 0)
                     {
