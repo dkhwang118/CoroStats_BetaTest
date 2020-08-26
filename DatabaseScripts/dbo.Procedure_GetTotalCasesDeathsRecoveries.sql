@@ -3,6 +3,6 @@
 AS
 	
 	SELECT * 
-	FROM [dbo].TotalValues
+	FROM [dbo].TotalValues 
 
 RETURN

@@ -67,13 +67,19 @@ AS
 
 		CREATE TABLE [dbo].[TotalValues] (
 			[ValueId] int IDENTITY(1,1) NOT NULL,
-			CONSTRAINT PK_TotalValues_ValueId PRIMARY KEY CLUSTERED (ValueId),
-			[TotalCoronavirusCases] int NOT NULL,
-			[TotalCoronavirusDeaths] int NOT NULL,
-			[TotalCoronavirusRecoveredCases] int
+			[Name] varchar(64) NOT NULL,
+			CONSTRAINT PK_TotalValues_ValueId_Name PRIMARY KEY CLUSTERED (ValueId, [Name]),
+			[Value_Int] int,
+			[Value_String] varchar(64)
 		)
 
-		INSERT INTO [dbo].[TotalValues] (TotalCoronavirusCases, TotalCoronavirusDeaths, TotalCoronavirusRecoveredCases)
-		VALUES (0, 0, 0)
+		INSERT INTO [dbo].[TotalValues] ([Name], Value_Int)
+		VALUES ('TotalCoronavirusCases', 0)
+
+		INSERT INTO [dbo].[TotalValues] ([Name], Value_Int)
+		VALUES ('TotalCoronavirusDeaths', 0)
 	
+		INSERT INTO [dbo].[TotalValues] ([Name], Value_Int)
+		VALUES ('TotalCoronavirusRecoveries', 0)
+		
 RETURN 0

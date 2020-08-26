@@ -80,10 +80,13 @@ namespace CoroStats_BetaTest.Services
             }
         }
 
-        public int[] GetTotalCasesDeathsRecoveries()
+        /// <summary>
+        /// Retrieves the total number of coronavirus Cases, Deaths, and Recoveries
+        /// </summary>
+        /// <returns>Dictionary accessed by string value of value name</returns>
+        public Dictionary<string, int> GetTotalCasesDeathsRecoveries()
         {
-            int[] values = new int[3];
-            int index = 0;
+            Dictionary<string, int> values = new Dictionary<string, int>();
 
             _connService.OpenConnection();
 
@@ -97,8 +100,8 @@ namespace CoroStats_BetaTest.Services
                 {
                     while (reader.Read())
                     {
-                        values[index] = Int32.Parse(reader[index].ToString());
-                        index++;
+                        List<object> vals = readSingleRow((IDataRecord)reader);
+                        values[(String)vals[1]] = (int)vals[2];
                     }
                 }
             }
@@ -126,6 +129,17 @@ namespace CoroStats_BetaTest.Services
             _connService.CloseConnection();
 
             return tables.Rows.Count;
+        }
+
+        private List<Object> readSingleRow(IDataRecord data)
+        {
+            List<Object> values = new List<Object>();
+            for (int i = 0; i < data.FieldCount; i++)
+            {
+                values.Add(data[i]);
+            }
+
+            return values;
         }
 
         #endregion // Helper Methods
