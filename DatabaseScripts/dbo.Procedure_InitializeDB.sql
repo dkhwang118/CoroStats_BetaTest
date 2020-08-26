@@ -2,7 +2,6 @@
 
 AS
 
-		PRINT 'DB is not initialized'
 		/* Initialize DB with tables and base values */
 		CREATE TABLE [dbo].[Settings] (
 			[Id] int IDENTITY(1,1) PRIMARY KEY,
@@ -74,5 +73,7 @@ AS
 			[TotalCoronavirusRecoveredCases] int
 		)
 
+		INSERT INTO [dbo].[TotalValues] (TotalCoronavirusCases, TotalCoronavirusDeaths, TotalCoronavirusRecoveredCases)
+		VALUES (0, 0, 0)
 	
 RETURN 0

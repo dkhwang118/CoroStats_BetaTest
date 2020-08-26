@@ -38,7 +38,6 @@ namespace CoroStats_BetaTest.ViewModels
 
             // Databse Integrity Check => If database isn't present, creates new database file
             _integrityService.DatabaseCheckOnStartup();
-            
         }
 
         #endregion // Constructor
@@ -65,7 +64,7 @@ namespace CoroStats_BetaTest.ViewModels
                 if (_currentContent == null)
                 {
                     _currentContent = new ContentControl();
-                    _viewModelStore.Add("Home", new ViewModel_Home());
+                    _viewModelStore.Add("Home", new ViewModel_Home(qService));
                     _currentContent.Content = _viewModelStore["Home"];
                 }
                 return _currentContent;
@@ -95,7 +94,7 @@ namespace CoroStats_BetaTest.ViewModels
             ViewModelBase viewModel;
             if (!_viewModelStore.TryGetValue("Home", out viewModel))
             {
-                _viewModelStore.Add("Home", new ViewModel_Home());
+                _viewModelStore.Add("Home", new ViewModel_Home(qService));
             }         
             this.CurrentContent.Content = _viewModelStore["Home"];
         }

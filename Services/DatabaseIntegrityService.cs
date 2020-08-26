@@ -14,6 +14,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using System.Windows;
 using System.IO;
+using Microsoft.Office.Core;
 
 namespace CoroStats_BetaTest.Services
 {
@@ -47,30 +48,44 @@ namespace CoroStats_BetaTest.Services
             // Check if database exists
             if (databaseIsPresent())
             {
+                // Initialize Database Connection
+                _connService.InitializeDatabaseConnection();
+
                 // Check if stored procedures are present
                 if (_qService.StoredProceduresLoaded())
                 {
-                    int numTables = _qService.GetNumberOfTablesInDatabase();
-                    // Check if stored procedures have created the tables
-                    if (numTables == 8)
+                    switch (_qService.DatabaseTablesLoaded())
                     {
-                        // if here. DB is initialized and tables are present
-                    }
-                    else if (numTables > 0)
-                    {
-                        // Creation of tables went wrong => delete all tables and create new ones
-                        _modService.DeleteDatabaseTables();
-                        _modService.CreateDatabseTables();
-                    }
-                    else
-                    {
-                        _modService.CreateDatabseTables();
+                        case "Full":
+                            // if here. DB is initialized and tables are present
+                            break;
+                        case "Partial":
+                            _modService.DeleteDatabaseTables();
+                            _modService.CreateDatabseTables();
+                            break;
+                        case "None":
+                            _modService.CreateDatabseTables();
+                            break;
                     }
                 }
-                else
+                else // Stored Procedures are partially or not loaded
                 {
                     _modService.LoadStoredProceduresToDatabase();
-                    _modService.CreateDatabseTables();
+                }
+
+                // Check if tables are present
+                switch (_qService.DatabaseTablesLoaded())
+                {
+                    case "Full":
+                        // if here. DB is initialized and tables are present
+                        break;
+                    case "Partial":
+                        _modService.DeleteDatabaseTables();
+                        _modService.CreateDatabseTables();
+                        break;
+                    case "None":
+                        _modService.CreateDatabseTables();
+                        break;
                 }
             }
             else // if database does not exist => inform user that it will be created and initialized
@@ -96,6 +111,7 @@ namespace CoroStats_BetaTest.Services
             }
             else return false;
         }
+
         #endregion // Helper Methods
     }
 }

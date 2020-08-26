@@ -24,10 +24,9 @@ namespace CoroStats_BetaTest
         public CoronaStatsHome()
         {
             // Initialize ViewModel for Homepage
-            var vm_Home = new ViewModel_Home();
+            
 
-            // default values
-            vm_Home.TotalCases = 0;
+            
 
             // try to open SQL connection to retrieve base values to display on home screen
             SqlConnectionService sqlCon = new SqlConnectionService();
@@ -44,9 +43,6 @@ namespace CoroStats_BetaTest
             //    MessageBox.Show("Detected First Time Use: Please Input Data Through \n \t Settings --> Initialize Database");
             //}
             
-
-
-            DataContext = vm_Home;
             InitializeComponent();
         }
 

@@ -27,7 +27,11 @@ namespace CoroStats_BetaTest
     {
         #region Fields
 
-        private SqlConnection _conn { get; set; }
+        private SqlConnection _conn;
+
+        #endregion // Fields
+
+        #region Properties
 
         /// <summary>
         /// Sql connection string
@@ -46,11 +50,9 @@ namespace CoroStats_BetaTest
 
         private bool _connIsOpen { get; set; }
 
+        private bool _connectionLoaded { get; set; }
+
         private bool _createDatabaseConnectionLoaded { get; set; }
-
-        #endregion // Fields
-
-        #region Properties
 
         public SqlConnection Conn { get => _conn; }
 
@@ -74,12 +76,17 @@ namespace CoroStats_BetaTest
             _baseDirectory = Directory.GetParent(_projectDirectory).FullName;
             _storedProcedureDirectory = _baseDirectory + "\\DatabaseScripts";
             _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + _projectDirectory + "\\CoronaStatsDB.mdf;Integrated Security=True";
+            
         }
 
         #endregion // Constructor
 
         #region Public Methods
         
+        public void InitializeDatabaseConnection()
+        {
+            _conn = new SqlConnection(_connectionString);
+        }
 
         /// <summary>
         /// Opens the SqlConnection to the Database
@@ -107,8 +114,7 @@ namespace CoroStats_BetaTest
         /// Opens the SqlConnection to the local MS SQL database host for creation of a new database
         /// </summary>
         public void OpenCreateDatabaseConnection()
-        {
-            
+        {        
             if (!_createDatabaseConnectionLoaded)
             {
                 // If there is a connection present, dispose

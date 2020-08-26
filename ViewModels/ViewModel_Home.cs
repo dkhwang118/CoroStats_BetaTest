@@ -9,6 +9,7 @@
 
 
 
+using CoroStats_BetaTest.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,17 +23,21 @@ namespace CoroStats_BetaTest.ViewModels
     {
         #region Fields
 
+        private long _totalCases;
+
+        private int _totalDeaths;
+
+        #endregion // Fields
+
+        #region Properties
         public DateTime DateToday { get { return DateTime.Today; } }
         public DateTime DateNow { get { return DateTime.Now; } }
 
-        private long _totalCases;
         public long TotalCases
         {
             get => _totalCases;
             set => SetProperty(ref _totalCases, value);
         }
-
-        private int _totalDeaths;
 
         public int TotalDeaths
         {
@@ -40,23 +45,17 @@ namespace CoroStats_BetaTest.ViewModels
             set => SetProperty(ref _totalDeaths, value);
         }
 
-        private bool _dbIsInitialized;
-        public bool DbIsInitialized
-        {
-            get => _dbIsInitialized;
-            set => SetProperty(ref _dbIsInitialized, value);
-        }
-
-        #endregion // Fields
+        #endregion // Properties
 
         #region Constructor
 
-        public ViewModel_Home()
+        public ViewModel_Home(DatabaseQueryService qService)
         {
             // declare Display Name
             base.DisplayName = "Corona Stats - Home";
 
             // On Init, get total cases from db
+
 
         }
 
@@ -64,10 +63,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         #region Helper Methods
 
-        private void getTotalCases()
-        {
 
-        }
 
         #endregion
 
