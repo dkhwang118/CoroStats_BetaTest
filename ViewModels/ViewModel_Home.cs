@@ -67,7 +67,7 @@ namespace CoroStats_BetaTest.ViewModels
             base.DisplayName = "Corona Stats - Home";
 
             // On Init, get total cases from db
-            updateTotalCasesDeathsRecoveries();
+            UpdateTotalCasesDeathsRecoveries();
 
         }
 
@@ -75,7 +75,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         #region Helper Methods
 
-        private void updateTotalCasesDeathsRecoveries()
+        private void UpdateTotalCasesDeathsRecoveries()
         {
             Dictionary<string, int> values = _qService.GetTotalCasesDeathsRecoveries();
             TotalCases = values["TotalCoronavirusCases"];
