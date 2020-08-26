@@ -54,38 +54,12 @@ namespace CoroStats_BetaTest.Services
                 // Check if stored procedures are present
                 if (_qService.StoredProceduresLoaded())
                 {
-                    switch (_qService.DatabaseTablesLoaded())
-                    {
-                        case "Full":
-                            // if here. DB is initialized and tables are present
-                            break;
-                        case "Partial":
-                            _modService.DeleteDatabaseTables();
-                            _modService.CreateDatabseTables();
-                            break;
-                        case "None":
-                            _modService.CreateDatabseTables();
-                            break;
-                    }
+                    checkDatabaseTables();
                 }
                 else // Stored Procedures are partially or not loaded
                 {
                     _modService.LoadStoredProceduresToDatabase();
-                }
-
-                // Check if tables are present
-                switch (_qService.DatabaseTablesLoaded())
-                {
-                    case "Full":
-                        // if here. DB is initialized and tables are present
-                        break;
-                    case "Partial":
-                        _modService.DeleteDatabaseTables();
-                        _modService.CreateDatabseTables();
-                        break;
-                    case "None":
-                        _modService.CreateDatabseTables();
-                        break;
+                    checkDatabaseTables();
                 }
             }
             else // if database does not exist => inform user that it will be created and initialized
@@ -110,6 +84,23 @@ namespace CoroStats_BetaTest.Services
                 return true;
             }
             else return false;
+        }
+
+        private void checkDatabaseTables()
+        {
+            switch (_qService.DatabaseTablesLoaded())
+            {
+                case "Full":
+                    // if here. DB is initialized and tables are present
+                    break;
+                case "Partial":
+                    _modService.DeleteDatabaseTables();
+                    _modService.CreateDatabseTables();
+                    break;
+                case "None":
+                    _modService.CreateDatabseTables();
+                    break;
+            }
         }
 
         #endregion // Helper Methods
