@@ -2,9 +2,9 @@
 ///     SqlConnectionService.cs
 ///     Author: David K. Hwang
 /// 
-///     Class that houses all methods necessary to instantiate the connection to the SQL Database
+///     Class that houses all methods necessary to instantiate and handle the connection to the SQL Database
 /// 
-///     Houses method to instantiate the database with all tables necessary for application function
+///     
 ///
 
 
@@ -42,9 +42,21 @@ namespace CoroStats_BetaTest
         private string _projectDirectory { get; set; }
         private string _baseDirectory { get; set; }
 
+        private string _storedProcedureDirectory { get; set; }
+
         private string _connIsOpen { get; set; }
 
         #endregion // Fields
+
+        #region Properties
+
+        public SqlConnection Conn { get => _conn; }
+
+        public string DatabaseFilePath { get => _databaseFilePath; }
+
+        public string StoredProcedureDirectory { get => _storedProcedureDirectory; }
+
+        #endregion
 
         #region Constructor
 
@@ -54,6 +66,7 @@ namespace CoroStats_BetaTest
             _projectDirectory = Directory.GetParent(_workingDirectory).Parent.FullName;
             _databaseFilePath = _projectDirectory + "\\CoronaStatsDB.mdf";
             _baseDirectory = Directory.GetParent(_projectDirectory).FullName;
+            _storedProcedureDirectory = _baseDirectory + "\\DatabaseScripts";
             _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + _projectDirectory + "\\CoronaStatsDB.mdf;Integrated Security=True";
         }
 
@@ -126,7 +139,14 @@ namespace CoroStats_BetaTest
         /// </summary>
         public void CloseConnection()
         {
-            _conn.Close();
+            try
+            {
+                _conn.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         public void InitializeDB()
