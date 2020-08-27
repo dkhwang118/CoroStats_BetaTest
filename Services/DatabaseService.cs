@@ -53,6 +53,12 @@ namespace CoroStats_BetaTest.Services
 
         public void AddToDB_WHO_CSV_FileData(string csvFilePath)
         {
+            // reused variables
+            string month = "";
+            string day = "";
+            string year = "";
+
+
             // Prep ExcelFileParsingService
             _parser = new ExcelFileParsingService(csvFilePath);
             _parser.SetParserToCSV();
@@ -60,13 +66,14 @@ namespace CoroStats_BetaTest.Services
             // Get first line to define columns
             string[] cols = _parser.GetFields();
 
-
+            // Read in and insert rest of data
             while (!_parser.EndOfFile)
             {
                 // Get line of data
                 string[] fields = _parser.GetFields();
 
-
+                // Separate Date from fields
+                
             }
 
         }

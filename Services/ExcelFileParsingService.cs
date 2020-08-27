@@ -79,6 +79,44 @@ namespace CoroStats_BetaTest.Services
             _parser.Close();
         }
 
+        public string GetFormattedDate_MonthDayYear(string date)
+        {
+            bool date_YearMonthDay = false;
+            bool date_MonthDayYear = false;
+            char delim = ' ';
+            string[] date_separated = { "0", "0", "0" };
+            string returnDate = "";
+
+            // Determine delimiter
+            if (date.Contains("/"))
+            {
+                delim = '/';
+                date_separated = date.Split("/");
+            }
+            else if (date.Contains("-"))
+            {
+                delim = '-';
+                date_separated = date.Split("-");
+            }
+
+            // Determine date structure - first pass of actual row data
+            if (date_separated[0].Length == 2)
+            {
+                date = date_separated[0] + date_separated[1] + date_separated[2];
+            }
+            else if (date_separated[0].Length == 4)
+            {
+                date = date_separated[1] + date_separated[2] + date_separated[0];
+            }
+
+            return date
+        }
+
+        /// <summary>
+        /// Gets the date structure found within the file
+        /// </summary>
+        /// <param name="date">date string read from file</param>
+        /// <returns>(delimiter char, bool if date is YearMonthDay format, bool if date is MonthDayYear format, a string[] of the date itself</returns>
         public (char, bool, bool, string[]) GetDateStructure(string date)
         {
             bool date_YearMonthDay = false;
@@ -144,7 +182,7 @@ namespace CoroStats_BetaTest.Services
                 {
                     month = Int16.Parse(checkingDate[0]);
                     day = Int16.Parse(checkingDate[1]);
-                    day = Int16.Parse(checkingDate[2]);
+                    year = Int16.Parse(checkingDate[2]);
                 }
                 else if (date_YearMonthDay)
                 {
