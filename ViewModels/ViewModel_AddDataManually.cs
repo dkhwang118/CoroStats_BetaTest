@@ -127,14 +127,15 @@ namespace CoroStats_BetaTest.ViewModels
         /// <returns></returns>
         private bool InformationFieldsFilled()
         {
-            return true;
-                
-                
-                //CheckField(CountryName, "Country Name")
-                //&& CheckField(WHO_CountryCode, "WHO Country Code")
-                //&& CheckField(WHO_Region, "WHO Region")
-                //&& CheckField(TotalCoronavirusCases, "Total Coronavirus Cases")
-                //&& CheckField(TotalCoronavirusDeaths, "Total Coronavirus Deaths");
+            if (CheckField(CountryName, "Country Name")
+                && CheckField(WHO_CountryCode, "WHO Country Code")
+                && CheckField(WHO_Region, "WHO Region")
+                && CheckField(TotalCoronavirusCases, "Total Coronavirus Cases")
+                && CheckField(TotalCoronavirusDeaths, "Total Coronavirus Deaths"))
+            {
+                return true;
+            }
+            else return false;
         }
 
         #endregion // Presentaiton Properties
@@ -143,6 +144,16 @@ namespace CoroStats_BetaTest.ViewModels
 
         private void AddCountryDataToDB()
         {
+            // Check fields
+            if (!(CheckField(CountryName, "Country Name")
+                && CheckField(WHO_CountryCode, "WHO Country Code")
+                && CheckField(WHO_Region, "WHO Region")
+                && CheckField(TotalCoronavirusCases, "Total Coronavirus Cases")
+                && CheckField(TotalCoronavirusDeaths, "Total Coronavirus Deaths")))
+            {
+                return;
+            }
+
             _connService.InitializeDatabaseConnection();
 
             int WHO_regionId;
@@ -164,12 +175,17 @@ namespace CoroStats_BetaTest.ViewModels
             _connService.Conn.Dispose();
         }
 
+        /// <summary>
+        /// Method to check if a field is filled with text. Displays messagebox if field is not filled
+        /// </summary>
+        /// <param name="field">string to be checked</param>
+        /// <param name="FieldDisplayName">Field name to be shown in messagebox</param>
+        /// <returns>field.Length > 0 => true, else false</returns>
         private bool CheckField(string field, string FieldDisplayName)
         {
             if (field.Length > 0) return true;
             else
             {
-                MessageBox.Show(String.Format("{0} has no value. Please input a value.", FieldDisplayName), "Add Information Manually Helper");
                 return false;
             }
         }

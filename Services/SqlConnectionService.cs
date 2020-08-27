@@ -27,32 +27,20 @@ namespace CoroStats_BetaTest
     {
         #region Fields
 
-        private SqlConnection _conn;
+        private SqlConnection _conn;                        // SqlConnection object
+        private string _connectionString;                   // Connection string to Sql DB
+        private string _connectionMessage;                  //
+        private string _databaseFilePath;
+        private string _workingDirectory;
+        private string _projectDirectory;
+        private string _baseDirectory;
+        private string _storedProcedureDirectory;
+        private bool _connIsOpen;
+        private bool _createDatabaseConnectionLoaded;
 
         #endregion // Fields
 
         #region Properties
-
-        /// <summary>
-        /// Sql connection string
-        /// </summary>
-        private string _connectionString { get; set; }
-
-        private string _connectionMessage { get; set; }
-
-        private string _databaseFilePath { get; set; }
-
-        private string _workingDirectory { get; set; }
-        private string _projectDirectory { get; set; }
-        private string _baseDirectory { get; set; }
-
-        private string _storedProcedureDirectory { get; set; }
-
-        private bool _connIsOpen { get; set; }
-
-        private bool _connectionLoaded { get; set; }
-
-        private bool _createDatabaseConnectionLoaded { get; set; }
 
         public SqlConnection Conn { get => _conn; }
 
@@ -83,6 +71,9 @@ namespace CoroStats_BetaTest
 
         #region Public Methods
         
+        /// <summary>
+        /// Initializes the SQL DB connection with the default connection string
+        /// </summary>
         public void InitializeDatabaseConnection()
         {
             _conn = new SqlConnection(_connectionString);
@@ -117,7 +108,7 @@ namespace CoroStats_BetaTest
         {        
             if (!_createDatabaseConnectionLoaded)
             {
-                // If there is a connection present, dispose
+                // If there is a connection object present, dispose
                 if (_conn != null) _conn.Dispose();
 
                 // Create new SqlConnection with specific connection string
@@ -151,16 +142,6 @@ namespace CoroStats_BetaTest
             {
                 MessageBox.Show(ex.ToString());
             }
-        }
-
-        public string[] GetDates_SingleCountry()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Dictionary<string, string[]> GetDates_AllCountries()
-        {
-            throw new NotImplementedException();
         }
 
         #endregion // Public Methods
