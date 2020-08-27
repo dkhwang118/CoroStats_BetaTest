@@ -63,14 +63,21 @@ namespace CoroStats_BetaTest
             _databaseFilePath = _projectDirectory + "\\CoronaStatsDB.mdf";
             _baseDirectory = Directory.GetParent(_projectDirectory).FullName;
             _storedProcedureDirectory = _baseDirectory + "\\DatabaseScripts";
-            _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + _projectDirectory + "\\CoronaStatsDB.mdf;Integrated Security=True";
-            
+            _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + _projectDirectory + "\\CoronaStatsDB.mdf;Integrated Security=True";         
         }
 
         #endregion // Constructor
 
+        #region Destructor 
+        ~SqlConnectionService()
+        {
+            if (_conn != null) _conn.Dispose();
+        }
+
+        #endregion // Destructor
+
         #region Public Methods
-        
+
         /// <summary>
         /// Initializes the SQL DB connection with the default connection string
         /// </summary>
