@@ -20,13 +20,13 @@ namespace CoroStats_BetaTest
         {
             base.OnStartup(e);
 
-            SqlConnectionService connService = new SqlConnectionService();
+            DatabaseService db = new DatabaseService();
 
             MainWindow window = new MainWindow();
 
             // Create the ViewModel to which 
             // the main window binds.
-            var viewModel = new ViewModel_MainWindow(connService);
+            var viewModel = new ViewModel_MainWindow(db);
 
             // Allow all controls in the window to 
             // bind to the ViewModel by setting the 

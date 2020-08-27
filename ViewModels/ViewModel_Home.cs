@@ -29,7 +29,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         private int _totalRecoveries;
 
-        private DatabaseQueryService _qService;
+        private DatabaseService _db;
 
         #endregion // Fields
 
@@ -59,9 +59,9 @@ namespace CoroStats_BetaTest.ViewModels
 
         #region Constructor
 
-        public ViewModel_Home(DatabaseQueryService qService)
+        public ViewModel_Home(DatabaseService db)
         {
-            _qService = qService;
+            _db = db;
 
             // declare Display Name
             base.DisplayName = "Corona Stats - Home";
@@ -77,7 +77,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         private void UpdateTotalCasesDeathsRecoveries()
         {
-            Dictionary<string, int> values = _qService.GetTotalCasesDeathsRecoveries();
+            Dictionary<string, int> values = _db.GetTotalCasesDeathsRecoveries();
             TotalCases = values["TotalCoronavirusCases"];
             TotalDeaths = values["TotalCoronavirusDeaths"];
             TotalRecoveries = values["TotalCoronavirusRecoveries"];

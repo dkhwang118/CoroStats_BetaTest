@@ -152,7 +152,7 @@ namespace CoroStats_BetaTest.ViewModels
         public void OpenSpreadsheetFileAndLoadData()
         {
             _spreadsheetFilePath = OpenSpreadsheetFileDialogue();
-            _parser = new ExcelFileParsingService();
+            _parser = new ExcelFileParsingService(_spreadsheetFilePath);
             LatestDataEntryDate = "Loading Latest Data Entry Date...";
             TotalCumulativeCases = "Calculating Total Cases To Date...";
             GetMetadataHandler();
@@ -177,7 +177,7 @@ namespace CoroStats_BetaTest.ViewModels
         {
 
             // call method to get latest date 
-            Int16[] returnValues = _parser.GetLatestDate_CSV(_spreadsheetFilePath);
+            Int16[] returnValues = _parser.GetLatestDate_CSV();
 
             // output latest date to UI TextBox
             LatestDataEntryDate = String.Format("{0}/{1}/{2}", returnValues[0], returnValues[1], returnValues[2]);
@@ -191,7 +191,7 @@ namespace CoroStats_BetaTest.ViewModels
         {
 
             // call method to get latest date 
-            Int16[] returnValues = _parser.GetLatestDate_Excel(_spreadsheetFilePath);
+            Int16[] returnValues = _parser.GetLatestDate_Excel();
 
 
             LatestDataEntryDate = String.Format("{0}/{1}/{2}", returnValues[0], returnValues[1], returnValues[2]);
@@ -203,7 +203,7 @@ namespace CoroStats_BetaTest.ViewModels
         private void GetTotalCasesOnFile_CSV()
         {
             // call method to get latest date 
-            int returnValue = _parser.GetTotalCases_CSV(_spreadsheetFilePath);
+            int returnValue = _parser.GetTotalCases_CSV();
 
             TotalCumulativeCases = String.Format("{0}", returnValue);
         }

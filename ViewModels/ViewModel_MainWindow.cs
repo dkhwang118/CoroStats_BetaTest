@@ -18,26 +18,20 @@ namespace CoroStats_BetaTest.ViewModels
         private ReadOnlyCollection<CommandViewModel> _leftMenuCommands;
         private ContentControl _currentContent;
         private Dictionary<string, ViewModelBase> _viewModelStore;
-        private SqlConnectionService _connService;
-        private DatabaseIntegrityService _integrityService;
-        public DatabaseQueryService qService;
-        public DatabaseModificationService modService;
+        private DatabaseService _db;
 
         #endregion // Fields
 
         #region Constructor
 
-        public ViewModel_MainWindow(SqlConnectionService connService)
+        public ViewModel_MainWindow(DatabaseService db)
         {
             base.DisplayName = "MainWindow - Home";
             _viewModelStore = new Dictionary<string, ViewModelBase>();
-            _connService = connService;
-            qService = new DatabaseQueryService(_connService);
-            modService = new DatabaseModificationService(_connService);
-            _integrityService = new DatabaseIntegrityService(_connService, qService, modService);
+            _db = db;
 
             // Databse Integrity Check => If database isn't present, creates new database file
-            _integrityService.DatabaseCheckOnStartup();
+            _db.DatabaseIntegrityCheck();
         }
 
         #endregion // Constructor
@@ -64,7 +58,7 @@ namespace CoroStats_BetaTest.ViewModels
                 if (_currentContent == null)
                 {
                     _currentContent = new ContentControl();
-                    _viewModelStore.Add("Home", new ViewModel_Home(qService));
+                    _viewModelStore.Add("Home", new ViewModel_Home(_db));
                     _currentContent.Content = _viewModelStore["Home"];
                 }
                 return _currentContent;
@@ -94,7 +88,7 @@ namespace CoroStats_BetaTest.ViewModels
             ViewModelBase viewModel;
             if (!_viewModelStore.TryGetValue("Home", out viewModel))
             {
-                _viewModelStore.Add("Home", new ViewModel_Home(qService));
+                _viewModelStore.Add("Home", new ViewModel_Home(_db));
             }         
             this.CurrentContent.Content = _viewModelStore["Home"];
         }
@@ -113,11 +107,6 @@ namespace CoroStats_BetaTest.ViewModels
         #endregion // Left Menu Commands
 
         #region Helper Methods
-
-        private void OnApplicationClose()
-        {
-            _connService.Conn.Dispose();
-        }
 
         #endregion // Helper Methods
 

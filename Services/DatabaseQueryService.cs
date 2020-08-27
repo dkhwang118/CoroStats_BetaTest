@@ -71,7 +71,6 @@ namespace CoroStats_BetaTest.Services
             }
             else if (numTables > 0)
             {
-                // Creation of tables went wrong => delete all tables and create new ones
                 return "Partial";
             }
             else

@@ -19,8 +19,99 @@ namespace CoroStats_BetaTest.Services
 {
     public class ExcelFileParsingService
     {
+        #region Fields
 
-        public Int16[] GetLatestDate_CSV(string _csvFilePath)
+        private string _filePath;
+        private TextFieldParser _parser;
+
+        #endregion // Fields
+
+        #region Properties
+
+        public bool EndOfFile{ get => _parser.EndOfData; }
+
+
+        #endregion // Properties
+
+        #region Constructor
+
+        /// <summary>
+        /// ExcelFileParsingService Class Constructor
+        /// </summary>
+        /// <param name="filePath">csv or excel file path</param>
+        public ExcelFileParsingService(string filePath)
+        {
+            _filePath = filePath;
+            _parser = new TextFieldParser(_filePath);
+        }
+
+        #endregion // Constructor
+
+        #region Destructor
+
+        ~ExcelFileParsingService()
+        {
+            _parser.Close();
+        }
+
+        #endregion // Destructor
+
+        #region Public Methods
+
+        public void SetParserToCSV()
+        {
+            _parser.TextFieldType = FieldType.Delimited;
+            _parser.SetDelimiters(",");
+        }
+
+        public string GetLine()
+        {
+            return _parser.ReadLine();
+        }
+
+        public string[] GetFields()
+        {
+            return _parser.ReadFields();
+        }
+
+        public void CloseParser()
+        {
+            _parser.Close();
+        }
+
+        public (char, bool, bool, string[]) GetDateStructure(string date)
+        {
+            bool date_YearMonthDay = false;
+            bool date_MonthDayYear = false;
+            char delim = ' ';
+            string[] date_separated = { "0", "0", "0" };
+
+            // Determine delimiter
+            if (date.Contains("/"))
+            {
+                delim = '/';
+                date_separated = date.Split("/");
+            }
+            else if (date.Contains("-"))
+            {
+                delim = '-';
+                date_separated = date.Split("-");
+            }
+
+            // Determine date structure - first pass of actual row data
+            if (date_separated[0].Length == 2)
+            {
+                date_MonthDayYear = true;
+            }
+            else if (date_separated[0].Length == 4)
+            {
+                date_YearMonthDay = true;
+            }
+
+            return (delim, date_YearMonthDay, date_MonthDayYear, date_separated);
+        }
+
+        public Int16[] GetLatestDate_CSV()
         {
             string[] fields;
             Int16 month = 0;
@@ -35,7 +126,7 @@ namespace CoroStats_BetaTest.Services
             char delim = ' ';
 
 
-            using (TextFieldParser parser = new TextFieldParser(@_csvFilePath))
+            using (TextFieldParser parser = new TextFieldParser(@_filePath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -43,30 +134,20 @@ namespace CoroStats_BetaTest.Services
                 // read first row to negate column titles
                 parser.ReadLine();
 
-                // Determine delimiter
+                // read first row
                 fields = parser.ReadFields();
-                if (fields[0].Contains("/"))
-                {
-                    delim = '/';
-                    checkingDate = fields[0].Split("/");
-                }
-                else if (fields[0].Contains("-"))
-                {
-                    delim = '-';
-                    checkingDate = fields[0].Split("-");
-                }
 
-                // Determine date structure - first pass of actual row data
-                if (checkingDate[0].Length == 2)
+                // determine date structure
+                (delim, date_YearMonthDay, date_MonthDayYear, checkingDate) = GetDateStructure(fields[0]);
+
+                if (date_MonthDayYear)
                 {
-                    date_MonthDayYear = true;
                     month = Int16.Parse(checkingDate[0]);
                     day = Int16.Parse(checkingDate[1]);
                     day = Int16.Parse(checkingDate[2]);
                 }
-                else if (checkingDate[0].Length == 4)
+                else if (date_YearMonthDay)
                 {
-                    date_YearMonthDay = true;
                     year = Int16.Parse(checkingDate[0]);
                     month = Int16.Parse(checkingDate[1]);
                     day = Int16.Parse(checkingDate[2]);
@@ -119,16 +200,14 @@ namespace CoroStats_BetaTest.Services
             return new Int16[] { month, day, year };
         }
 
-        public int GetTotalCases_CSV(string _csvFilePath)
+        public int GetTotalCases_CSV()
         {
             string[] fields;
             int countryCases_previous = 0;
-            //int countryCases_current = 0;
-            //int currentCountryCases = 0;
             int totalCumulativeCases = 0;
             string country_previous = "";
 
-            using (TextFieldParser parser = new TextFieldParser(@_csvFilePath))
+            using (TextFieldParser parser = new TextFieldParser(@_filePath))
             {
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(",");
@@ -166,12 +245,12 @@ namespace CoroStats_BetaTest.Services
             return totalCumulativeCases;
         }
 
-        public Int16[] GetLatestDate_Excel(string _excelFilePath)
+        public Int16[] GetLatestDate_Excel()
         {
             // create COM objects
             // helping credit to: https://coderwall.com/p/app3ya/read-excel-file-in-c
             Microsoft.Office.Interop.Excel.Application xlApp = new Excel.Application();
-            Microsoft.Office.Interop.Excel.Workbook wkbk = xlApp.Workbooks.Open(@_excelFilePath);
+            Microsoft.Office.Interop.Excel.Workbook wkbk = xlApp.Workbooks.Open(@_filePath);
             Excel.Worksheet xlWorksheet = (Excel.Worksheet)wkbk.Worksheets[1];
             Excel.Range xlRange = xlWorksheet.UsedRange;
 
@@ -236,5 +315,7 @@ namespace CoroStats_BetaTest.Services
 
             return new Int16[] { month, day, year };
         }
+
+        #endregion // Public Methods
     }
 }

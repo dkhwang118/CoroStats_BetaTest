@@ -84,6 +84,7 @@ namespace CoroStats_BetaTest
         /// <returns></returns>
         protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName]string propertyName = null)
         {
+            PropertyChangedEventHandler handler = this.PropertyChanged;
             if (!EqualityComparer<T>.Default.Equals(field, newValue))
             {
                 field = newValue;
