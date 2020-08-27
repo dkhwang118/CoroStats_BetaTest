@@ -22,7 +22,7 @@ namespace CoroStats_BetaTest
 
             SqlConnectionService connService = new SqlConnectionService();
 
-            MainWindow window = new MainWindow(connService);
+            MainWindow window = new MainWindow();
 
             // Create the ViewModel to which 
             // the main window binds.
