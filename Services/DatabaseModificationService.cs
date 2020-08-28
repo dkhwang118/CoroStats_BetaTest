@@ -260,6 +260,69 @@ namespace CoroStats_BetaTest.Services
             return regionId;
         }
 
+        public int AddToDB_Date_ReturnDateId(string date)
+        {
+            // variables
+            int dateId = -1;
+            string qString = "INSERT INTO [dbo].CoronavirusDate (Date) output INSERTED.DateId VALUES(@DATE)";
+
+            // Open SqlConnection
+            _connService.OpenConnection();
+
+            try
+            {
+                // Build SqlCommand
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@DATE", date);
+
+                // Execute command; return dateId
+                dateId = (int)cmd.ExecuteScalar();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return dateId;
+        }
+
+        public void AddToDB_NewCoronavirusCasesDate(int countryId, int dateId, int numNewCases)
+        {
+            // variables
+            string qString = "INSERT INTO [dbo].NewCoronavirusCasesByDate (CountryId, DateId, NewCases) "
+                           + "VALUES(@COUNTRYID, @DATEID, @NEWCASES)";
+
+            // open connection
+            _connService.OpenConnection();
+
+            try
+            {
+                // Build SqlCommand
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@COUNTRYID", countryId);
+                cmd.Parameters.AddWithValue("@DATEID", dateId);
+                cmd.Parameters.AddWithValue("@NEWCASES", numNewCases);
+
+                // Execute command
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            // close connection
+            _connService.CloseConnection();
+        }
+        
+
+        
+
         public void AddToDB_CountryInfo_MultipleDates()
         {
             throw new NotImplementedException();

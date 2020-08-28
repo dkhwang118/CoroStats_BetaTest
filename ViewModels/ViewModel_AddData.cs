@@ -116,6 +116,7 @@ namespace CoroStats_BetaTest.ViewModels
         {
             _canOpenNewView = true;
         }
+
         #endregion // Public Methods
     }
 }

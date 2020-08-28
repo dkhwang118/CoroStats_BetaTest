@@ -116,7 +116,7 @@ namespace CoroStats_BetaTest.Services
 
         public int GetWHO_Region(string WHO_region)
         {
-            Object value = 0;
+            Object value = -1;
 
             _connService.OpenConnection();
 
@@ -145,10 +145,52 @@ namespace CoroStats_BetaTest.Services
             return (int)value;
         }
 
+        /// <summary>
+        /// Searches DB for country specified and returns country ID number if found
+        /// </summary>
+        /// <param name="countryName">Country Name</param>
+        /// <returns>Country ID; = -1 if country isn't in DB</returns>
+        public int FindCountryInDB_ReturnCountryId(string countryName)
+        {
+            // variable
+            string qString = "SELECT CountryId FROM dbo.CountryInfo WHERE Name = @NAME";
+            int countryId = -1;
+
+            _connService.OpenConnection();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@NAME", countryName);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        countryId = (int)ReadSingleValue((IDataRecord)reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return countryId;
+        }
+
+        /// <summary>
+        /// Checks if country is present in DB
+        /// </summary>
+        /// <param name="countryName">Country Name</param>
+        /// <returns>false if not present; true if present</returns>
         public bool IsCountryPresentInDB(string countryName)
         {
             // variable
-            string qString = "SELECT * FROM dbo.CountryInfo WHERE Name = @NAME";
+            string qString = "SELECT CountryId FROM dbo.CountryInfo WHERE Name = @NAME";
             bool isPresent = false;
 
             _connService.OpenConnection();
@@ -177,6 +219,39 @@ namespace CoroStats_BetaTest.Services
             return isPresent;
         }
 
+
+        public int FindDateInDB_ReturnDateId(string date)
+        {
+            // variable
+            string qString = "SELECT DateId FROM dbo.CoronavirusDate WHERE Date = @DATE";
+            int dateId = 1; ;
+
+            _connService.OpenConnection();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@DATE", date);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        dateId = (int)ReadSingleValue((IDataRecord)reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return dateId;
+        }
+
         #endregion // Public Methods
 
         #region Helper Methods
@@ -192,6 +267,11 @@ namespace CoroStats_BetaTest.Services
             return tables.Rows.Count;
         }
 
+        /// <summary>
+        /// Helper Method to read a single row from database
+        /// </summary>
+        /// <param name="data">database record object representing a single row</param>
+        /// <returns>List of objects that represent a single row of values returned from database query</returns>
         private List<Object> ReadSingleRow(IDataRecord data)
         {
             List<Object> values = new List<Object>();
@@ -203,6 +283,11 @@ namespace CoroStats_BetaTest.Services
             return values;
         }
 
+        /// <summary>
+        /// Helper Method to read a single value returned from the database
+        /// </summary>
+        /// <param name="data">database record object representing a single row</param>
+        /// <returns>the first value returned from the database query</returns>
         private Object ReadSingleValue(IDataRecord data)
         {
             return data[0];

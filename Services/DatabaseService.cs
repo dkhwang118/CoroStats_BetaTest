@@ -69,6 +69,10 @@ namespace CoroStats_BetaTest.Services
             int newDeaths = 0;
             int cumulativeDeaths = 0;
 
+            int countryId = 0;
+            int WHO_regionId = 0;
+            int dateId = 0;
+
 
             // Prep ExcelFileParsingService
             _parser = new ExcelFileParsingService(csvFilePath);
@@ -88,18 +92,36 @@ namespace CoroStats_BetaTest.Services
                     WHO_region, newCases, 
                     cumulativeCases, newDeaths, cumulativeDeaths) = _parser.GetFields_Formatted();
 
-                // Check if country is not already in DB
-                if (!_qService.IsCountryPresentInDB(countryName))
+                // Check if country is already in DB
+                if ((countryId = _qService.FindCountryInDB_ReturnCountryId(countryName)) == -1)
                 {
                     // Add country to DB; no adding of Total Cases or Total Deaths
                     AddCountryDataToDB_Spreadsheet(countryName, countryCode, WHO_region);
                 }
+
+                // Check if CoronavirusDate already in DB
+                if ((dateId = _qService.FindDateInDB_ReturnDateId(date)) == -1)
+                {
+                    dateId = _modService.AddToDB_Date_ReturnDateId(date);
+                }
+
+                // Add Data to NewCoronavirusCasesByDate
+                _modService.AddToDB_NewCoronavirusCasesDate(countryId, dateId, newCases);
+
 
 
             }
 
         }
 
+        /// <summary>
+        /// Method to add user-defined country information to the application database
+        /// </summary>
+        /// <param name="countryName"></param>
+        /// <param name="WHO_countryCode"></param>
+        /// <param name="WHO_region"></param>
+        /// <param name="totalCases"></param>
+        /// <param name="totalDeaths"></param>
         public void AddCountryDataToDB_Manual(string countryName, string WHO_countryCode,
                                         string WHO_region, string totalCases, string totalDeaths)
         {
@@ -121,7 +143,7 @@ namespace CoroStats_BetaTest.Services
 
             // Check if region is in database
             WHO_regionId = _qService.GetWHO_Region(WHO_region);
-            if (WHO_regionId == 0) // If region is not in database => add row and return regionId
+            if (WHO_regionId == -1) // If region is not in database => add row and return regionId
             {
                 WHO_regionId = _modService.AddToDB_WHO_Region_ReturnRegionId(WHO_region);
             }
@@ -137,6 +159,12 @@ namespace CoroStats_BetaTest.Services
 
         #region Private Methods
 
+        /// <summary>
+        /// Helper method to add Country Data to database from WHO spreadsheet
+        /// </summary>
+        /// <param name="countryName">Country Name</param>
+        /// <param name="WHO_countryCode">WHO Country Code</param>
+        /// <param name="WHO_region">WHO Region</param>
         private void AddCountryDataToDB_Spreadsheet(string countryName, string WHO_countryCode,
                                         string WHO_region)
         {
@@ -144,7 +172,7 @@ namespace CoroStats_BetaTest.Services
 
             // Check if region is in database
             WHO_regionId = _qService.GetWHO_Region(WHO_region);
-            if (WHO_regionId == 0) // If region is not in database => add row and return regionId
+            if (WHO_regionId == -1) // If region is not in database => add row and return regionId
             {
                 WHO_regionId = _modService.AddToDB_WHO_Region_ReturnRegionId(WHO_region);
             }
