@@ -228,7 +228,7 @@ namespace CoroStats_BetaTest.ViewModels
         {
             // Get values and show ProgressBar window
             Window view_progressBar = new View_ProgressBar_SpreadsheetDataToDB();
-            var viewModel_progressBar = new ViewModel_ProgressBar_SpreadsheetDataToDB(0, TotalDataFileEntries_int);
+            var viewModel_progressBar = new ViewModel_ProgressBar_SpreadsheetDataToDB(0, TotalDataFileEntries_int, ref _db);
 
             view_progressBar.DataContext = viewModel_progressBar;
             view_progressBar.Show();

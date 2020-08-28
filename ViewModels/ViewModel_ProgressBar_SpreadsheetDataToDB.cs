@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoroStats_BetaTest.Services;
+using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
@@ -12,6 +13,7 @@ namespace CoroStats_BetaTest.ViewModels
         int _minValue;
         int _maxValue;
         int _currentValue;
+        DatabaseService _db;
 
         #endregion // Fields
 
@@ -22,10 +24,11 @@ namespace CoroStats_BetaTest.ViewModels
 
         }
 
-        public ViewModel_ProgressBar_SpreadsheetDataToDB(int minValue, int maxValue)
-        {
+        public ViewModel_ProgressBar_SpreadsheetDataToDB(int minValue, int maxValue, ref DatabaseService db)
+        { 
             _minValue = minValue;
             _maxValue = maxValue;
+            _db = db;
         }
 
         #endregion // Constructors
@@ -44,8 +47,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         public int CurrentValue
         {
-            get => _currentValue;
-            set => SetProperty<int>(ref _currentValue, value);
+            get => _db.TotalEntriesChecked;
         }
 
         #endregion

@@ -25,13 +25,25 @@ namespace CoroStats_BetaTest.Services
         private DatabaseModificationService _modService;
         private ExcelFileParsingService _parser;
 
+        private int _totalEntriesChecked;
+
 
         #endregion // Fields
+
+        #region Properties
+
+        public int TotalEntriesChecked
+        {
+            get => _totalEntriesChecked;
+        }
+
+        #endregion // Properties
 
         #region Constructor
 
         public DatabaseService()
         {
+            _totalEntriesChecked = 0;
             _connService = new SqlConnectionService();
             _qService = new DatabaseQueryService(_connService);
             _modService = new DatabaseModificationService(_connService);
@@ -110,14 +122,18 @@ namespace CoroStats_BetaTest.Services
                 }
 
                 // Check if Database already has an entry for this country at this date
-                if (_qService.GetNewCases_SingleCountrySingleDate(countryId, dateId) != -1) continue;
-
+                if (_qService.IsDateDataPresent(countryId, dateId))
+                {
+                    _totalEntriesChecked++;
+                    continue;
+                }
                 // Add Data to NewCoronavirusCasesByDate
                 _modService.AddToDB_NewCoronavirusCasesDate(countryId, dateId, newCases);
 
                 // Add Data to NewCoronavirusDeathsByDate
                 _modService.AddToDB_NewCoronavirusDeathsDate(countryId, dateId, newDeaths);
 
+                _totalEntriesChecked++;
                 totalEntriesAdded++;
 
             }
