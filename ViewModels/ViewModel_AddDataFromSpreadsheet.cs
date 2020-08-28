@@ -184,11 +184,33 @@ namespace CoroStats_BetaTest.ViewModels
             beginLoadingDateThread.Start();
         }
 
+        private void AddFileDataToDbHandler()
+        {
+            Thread beginDataInputThread = new Thread(new ThreadStart(AddDataToDbThreadStartingPoint));
+            beginDataInputThread.SetApartmentState(ApartmentState.STA);
+            beginDataInputThread.IsBackground = true;
+            beginDataInputThread.Start();
+        }
+
         private void GetDataThreadStartingPoint()
         {
             GetLatestDateOnFile_CSV();
             GetTotalCasesOnFile_CSV();
             System.Windows.Threading.Dispatcher.Run();
+        }
+
+        private void AddDataToDbThreadStartingPoint()
+        {
+            int totalEntriesAdded = _db.AddToDB_WHO_CSV_FileData(_spreadsheetFilePath);
+            MessageBox.Show(String.Format("{0} Entries Added to Database!", totalEntriesAdded),
+                                "CoronaStats Database Helper Service");
+            System.Windows.Threading.Dispatcher.Run();
+        }
+
+        private void AddSpreadsheetDataToDb_Begin()
+        {
+
+            AddFileDataToDbHandler();
         }
 
         #endregion // Multithreading methods
@@ -228,7 +250,7 @@ namespace CoroStats_BetaTest.ViewModels
         {
             // Get values and show ProgressBar window
             Window view_progressBar = new View_ProgressBar_SpreadsheetDataToDB();
-            var viewModel_progressBar = new ViewModel_ProgressBar_SpreadsheetDataToDB(0, TotalDataFileEntries_int, ref _db);
+            var viewModel_progressBar = new ViewModel_ProgressBar_SpreadsheetDataToDB(0, ref _totalDatafileEntries, ref _db);
 
             view_progressBar.DataContext = viewModel_progressBar;
             view_progressBar.Show();

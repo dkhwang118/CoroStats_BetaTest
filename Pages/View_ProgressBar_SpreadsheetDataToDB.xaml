@@ -28,7 +28,7 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Row="1" Grid.Column="1" Content="Loading In Values To Database..." HorizontalAlignment="Center"/>
-        <ProgressBar Grid.Column='1' Grid.Row="3" Minimum="0" Maximum="{Binding Path=MaxValue}" Value="{Binding Path=CurrentValue}"/>
+        <ProgressBar Grid.Column='1' Grid.Row="3" Minimum="0" Maximum="{Binding Path=MaxValue}" Value="{Binding Path=_currentValue}"/>
 
 
     </Grid>

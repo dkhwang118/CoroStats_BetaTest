@@ -12,7 +12,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         int _minValue;
         int _maxValue;
-        int _currentValue;
+        public int _currentValue;
         DatabaseService _db;
 
         #endregion // Fields
@@ -24,11 +24,12 @@ namespace CoroStats_BetaTest.ViewModels
 
         }
 
-        public ViewModel_ProgressBar_SpreadsheetDataToDB(int minValue, int maxValue, ref DatabaseService db)
-        { 
+        public ViewModel_ProgressBar_SpreadsheetDataToDB(int minValue, ref int maxValue, ref DatabaseService db)
+        {
             _minValue = minValue;
             _maxValue = maxValue;
             _db = db;
+            ProgressBarUpdateThread_Start();
         }
 
         #endregion // Constructors
@@ -45,12 +46,40 @@ namespace CoroStats_BetaTest.ViewModels
             get => _maxValue;
         }
 
-        public int CurrentValue
+        #endregion
+
+        #region Public Methods
+
+
+        #endregion // Public Methods
+
+
+        #region Update Methods
+
+        private void ProgressBarUpdateThread_Start()
         {
-            get => _db.TotalEntriesChecked;
+            Thread beginProgressBarUpdateThread = new Thread(new ThreadStart(UpdateThreadStartingPoint));
+            beginProgressBarUpdateThread.SetApartmentState(ApartmentState.STA);
+            beginProgressBarUpdateThread.IsBackground = true;
+            beginProgressBarUpdateThread.Start();
         }
 
-        #endregion
+        private void UpdateThreadStartingPoint()
+        {
+            // Do work
+            UpdateCurrentValue();
+            System.Windows.Threading.Dispatcher.Run();
+        }
+
+        private void UpdateCurrentValue()
+        {
+            _currentValue = _db.TotalEntriesChecked;
+        }
+
+        #endregion // Update Methods
+
+
 
     }
 }
+
