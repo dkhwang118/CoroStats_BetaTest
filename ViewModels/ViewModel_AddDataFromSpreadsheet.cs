@@ -39,6 +39,7 @@ namespace CoroStats_BetaTest.ViewModels
         private string _totalCumulativeDeaths;
         private ExcelFileParsingService _parser;
         private DatabaseService _db;
+        private int _totalDatafileEntries;
 
         #endregion // Fields
 
@@ -53,6 +54,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         public ViewModel_AddDataFromSpreadsheet()
         {
+            _totalDatafileEntries = -1;
             _db = new DatabaseService();
             this.DisplayName = "Add Data From WHO Spreadsheet";
             _canOpenFile = true;
@@ -90,6 +92,32 @@ namespace CoroStats_BetaTest.ViewModels
                         );
                 }
                 return _command_addSpreadsheetDataToDB;
+            }
+        }
+
+        public int TotalDataFileEntries_int
+        {
+            get
+            {
+                if (_totalDatafileEntries == -1) return 0;
+                else return _totalDatafileEntries;
+            }
+            set
+            {
+                SetProperty<int>(ref _totalDatafileEntries, value);
+            }
+        }
+
+        public string TotalDatafileEntries_string
+        {
+            get
+            {
+                if (_totalDatafileEntries == -1) return "...";
+                else return _totalDatafileEntries.ToString();
+            }
+            set
+            {
+                SetProperty<int>(ref _totalDatafileEntries, Int32.Parse(value));
             }
         }
 
@@ -198,7 +226,16 @@ namespace CoroStats_BetaTest.ViewModels
 
         public void AddSpreadsheetDataToDB()
         {
-            _db.AddToDB_WHO_CSV_FileData(_spreadsheetFilePath);
+            // Get values and show ProgressBar window
+            Window view_progressBar = new View_ProgressBar_SpreadsheetDataToDB();
+            var viewModel_progressBar = new ViewModel_ProgressBar_SpreadsheetDataToDB(0, TotalDataFileEntries_int);
+
+            view_progressBar.DataContext = viewModel_progressBar;
+            view_progressBar.Show();
+
+            int totalEntriesAdded = _db.AddToDB_WHO_CSV_FileData(_spreadsheetFilePath);
+            MessageBox.Show(String.Format("{0} Entries Added to Database!", totalEntriesAdded),
+                                "CoronaStats Database Helper Service");
         }
 
         /// <summary>

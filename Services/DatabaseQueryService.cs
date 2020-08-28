@@ -255,6 +255,41 @@ namespace CoroStats_BetaTest.Services
             return dateId;
         }
 
+        public int GetNewCases_SingleCountrySingleDate(int countryId, int dateId)
+        {
+            // variable
+            string qString = "SELECT NewCases FROM dbo.NewCoronavirusCasesByDate WHERE CountryId = @COUNTRYID AND DateId = @DATEID";
+            int newCases = -1; ;
+
+            _connService.OpenConnection();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@COUNTRYID", countryId);
+                cmd.Parameters.AddWithValue("@DATEID", dateId);
+
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        newCases = (int)ReadSingleValue((IDataRecord)reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return newCases;
+        }
+
         #endregion // Public Methods
 
         #region Helper Methods

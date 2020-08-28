@@ -57,7 +57,7 @@ namespace CoroStats_BetaTest.Services
             return _qService.GetTotalCasesDeathsRecoveries();
         }
 
-        public void AddToDB_WHO_CSV_FileData(string csvFilePath)
+        public int AddToDB_WHO_CSV_FileData(string csvFilePath)
         {
             // reused variables
             string date = "";
@@ -71,6 +71,8 @@ namespace CoroStats_BetaTest.Services
 
             int countryId = 0;
             int dateId = 0;
+
+            int totalEntriesAdded = 0;
 
 
             // Prep ExcelFileParsingService
@@ -86,6 +88,8 @@ namespace CoroStats_BetaTest.Services
             // Read in and insert rest of data
             while (!_parser.EndOfFile)
             {
+
+
                 // Get line of data
                 (date, countryCode, countryName, 
                     WHO_region, newCases, 
@@ -104,10 +108,9 @@ namespace CoroStats_BetaTest.Services
                     // if not, add to db and get date
                     dateId = _modService.AddToDB_Date_ReturnDateId(date);
                 }
-                else // if date already in DB, skip adding date and move on to next entry
-                {
-                    continue;
-                }
+
+                // Check if Database already has an entry for this country at this date
+                if (_qService.GetNewCases_SingleCountrySingleDate(countryId, dateId) != -1) continue;
 
                 // Add Data to NewCoronavirusCasesByDate
                 _modService.AddToDB_NewCoronavirusCasesDate(countryId, dateId, newCases);
@@ -115,7 +118,11 @@ namespace CoroStats_BetaTest.Services
                 // Add Data to NewCoronavirusDeathsByDate
                 _modService.AddToDB_NewCoronavirusDeathsDate(countryId, dateId, newDeaths);
 
+                totalEntriesAdded++;
+
             }
+
+            return totalEntriesAdded;
 
         }
 
