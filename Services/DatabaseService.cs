@@ -70,7 +70,6 @@ namespace CoroStats_BetaTest.Services
             int cumulativeDeaths = 0;
 
             int countryId = 0;
-            int WHO_regionId = 0;
             int dateId = 0;
 
 
@@ -96,7 +95,7 @@ namespace CoroStats_BetaTest.Services
                 if ((countryId = _qService.FindCountryInDB_ReturnCountryId(countryName)) == -1)
                 {
                     // Add country to DB; no adding of Total Cases or Total Deaths
-                    AddCountryDataToDB_Spreadsheet(countryName, countryCode, WHO_region);
+                    countryId = AddCountryDataToDB_Spreadsheet(countryName, countryCode, WHO_region);
                 }
 
                 // Check if CoronavirusDate already in DB
@@ -166,10 +165,12 @@ namespace CoroStats_BetaTest.Services
         /// <param name="countryName">Country Name</param>
         /// <param name="WHO_countryCode">WHO Country Code</param>
         /// <param name="WHO_region">WHO Region</param>
-        private void AddCountryDataToDB_Spreadsheet(string countryName, string WHO_countryCode,
+        /// <returns>newly added CoutnryId</returns>
+        private int AddCountryDataToDB_Spreadsheet(string countryName, string WHO_countryCode,
                                         string WHO_region)
         {
             int WHO_regionId;
+            int countryId;
 
             // Check if region is in database
             WHO_regionId = _qService.GetWHO_Region(WHO_region);
@@ -178,8 +179,10 @@ namespace CoroStats_BetaTest.Services
                 WHO_regionId = _modService.AddToDB_WHO_Region_ReturnRegionId(WHO_region);
             }
 
-            // Add country info to DB w/ WHO_RegionId
-            _modService.AddToDB_NewCountryInfo_NoPopulation(WHO_countryCode, countryName, WHO_regionId, 0, 0);
+            // Add country info to DB w/ WHO_RegionId; return newly added Country's countryId
+            countryId = _modService.AddToDB_NewCountryInfo_NoPopulation_ReturnCountryId(WHO_countryCode, countryName, WHO_regionId, 0, 0);
+
+            return countryId;
         }
 
         #endregion // Private Methods

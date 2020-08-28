@@ -219,18 +219,59 @@ namespace CoroStats_BetaTest.Services
                     command.Parameters.AddWithValue("@TotalCoronavirusDeaths", totalCoronaDeaths);
 
                     command.ExecuteNonQuery();
-
-
-                    MessageBox.Show(String.Format("{0}'s Information Successfully Added!", countryName));
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message.ToString());
-                MessageBox.Show(String.Format("Failed To Add {0}'s Information", countryName));
             }
 
             _connService.CloseConnection();
+
+        }
+
+        /// <summary>
+        /// Adds Country Information to Database and Returns the newly add Country's countryId
+        /// </summary>
+        /// <param name="countryCode">WHO country code</param>
+        /// <param name="countryName">Country Name</param>
+        /// <param name="WHO_regionId">WHO Region ID</param>
+        /// <param name="totalCoronaCases">Total Coronavirus Cases for Country</param>
+        /// <param name="totalCoronaDeaths">Total Coronavirus Deaths for Country</param>
+        /// <returns>CountryID from table</returns>
+        public int AddToDB_NewCountryInfo_NoPopulation_ReturnCountryId(string countryCode, string countryName,
+                                                        int WHO_regionId, int totalCoronaCases,
+                                                        int totalCoronaDeaths)
+        {
+            // variables
+            string sQuery = "INSERT INTO [dbo].CountryInfo (CountryCode, [Name], WHO_RegionId, TotalCoronavirusCases, TotalCoronavirusDeaths) "
+                          + "output INSERTED.CountryId "
+                          + "VALUES(@CountryCode, @Name, @WHO_RegionId, @TotalCoronavirusCases, @TotalCoronavirusDeaths)";
+            int countryId = -1;
+
+            _connService.OpenConnection();
+
+            // Parameterized query string
+            try
+            {
+                SqlCommand cmd = new SqlCommand(sQuery, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@CountryCode", countryCode);
+                cmd.Parameters.AddWithValue("@Name", countryName);
+                cmd.Parameters.AddWithValue("@WHO_RegionId", WHO_regionId);
+                cmd.Parameters.AddWithValue("@TotalCoronavirusCases", totalCoronaCases);
+                cmd.Parameters.AddWithValue("@TotalCoronavirusDeaths", totalCoronaDeaths);
+
+                countryId = (int)cmd.ExecuteScalar();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return countryId;
 
         }
 
@@ -324,7 +365,7 @@ namespace CoroStats_BetaTest.Services
         {
             // variables
             string qString = "INSERT INTO [dbo].NewCoronavirusDeathsByDate (CountryId, DateId, NewDeaths) "
-                           + "VALUES(@COUNTRYID, @DATEID, @NEWCDEATHS)";
+                           + "VALUES(@COUNTRYID, @DATEID, @NEWDEATHS)";
 
             // open connection
             _connService.OpenConnection();
@@ -336,7 +377,7 @@ namespace CoroStats_BetaTest.Services
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@COUNTRYID", countryId);
                 cmd.Parameters.AddWithValue("@DATEID", dateId);
-                cmd.Parameters.AddWithValue("@NEWCASES", numNewDeaths);
+                cmd.Parameters.AddWithValue("@NEWDEATHS", numNewDeaths);
 
                 // Execute command
                 cmd.ExecuteNonQuery();

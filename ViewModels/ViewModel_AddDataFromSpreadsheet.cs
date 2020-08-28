@@ -29,12 +29,16 @@ namespace CoroStats_BetaTest.ViewModels
         #region Fields
 
         private RelayCommand _command_openSpreadsheetFile;
+        private RelayCommand _command_addSpreadsheetDataToDB;
+
         private bool _canOpenFile;
+        private bool _canGetDataFromFile;
         private string _spreadsheetFilePath;
         private string _latestDataEntryDate;
         private string _totalCumulativeCases;
         private string _totalCumulativeDeaths;
         private ExcelFileParsingService _parser;
+        private DatabaseService _db;
 
         #endregion // Fields
 
@@ -49,8 +53,10 @@ namespace CoroStats_BetaTest.ViewModels
 
         public ViewModel_AddDataFromSpreadsheet()
         {
+            _db = new DatabaseService();
             this.DisplayName = "Add Data From WHO Spreadsheet";
             _canOpenFile = true;
+            _canGetDataFromFile = false;
         }
 
         #endregion // Constructor
@@ -69,6 +75,21 @@ namespace CoroStats_BetaTest.ViewModels
                         );
                 }
                 return _command_openSpreadsheetFile;
+            }
+        }
+
+        public ICommand Command_AddSpreadsheetDataToDB
+        {
+            get
+            {
+                if (_command_addSpreadsheetDataToDB == null)
+                {
+                    _command_addSpreadsheetDataToDB = new RelayCommand(
+                        param => this.AddSpreadsheetDataToDB(),
+                        param => this._canGetDataFromFile
+                        );
+                }
+                return _command_addSpreadsheetDataToDB;
             }
         }
 
@@ -152,6 +173,9 @@ namespace CoroStats_BetaTest.ViewModels
         public void OpenSpreadsheetFileAndLoadData()
         {
             _spreadsheetFilePath = OpenSpreadsheetFileDialogue();
+            if (_spreadsheetFilePath == "Please select the WHO Coronavirus Spreadsheet File") return;
+            else _canGetDataFromFile = true;
+
             _parser = new ExcelFileParsingService(_spreadsheetFilePath);
             LatestDataEntryDate = "Loading Latest Data Entry Date...";
             TotalCumulativeCases = "Calculating Total Cases To Date...";
@@ -162,11 +186,19 @@ namespace CoroStats_BetaTest.ViewModels
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
 
-            if (fileDialog.ShowDialog() == true) _spreadsheetFilePath = fileDialog.FileName;
+            if (fileDialog.ShowDialog() == true) 
+            {
+                _spreadsheetFilePath = fileDialog.FileName;
+            } 
 
             return _spreadsheetFilePath;
 
             // help from https://www.wpf-tutorial.com/dialogs/the-openfiledialog/
+        }
+
+        public void AddSpreadsheetDataToDB()
+        {
+            _db.AddToDB_WHO_CSV_FileData(_spreadsheetFilePath);
         }
 
         /// <summary>

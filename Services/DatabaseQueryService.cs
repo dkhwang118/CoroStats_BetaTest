@@ -224,7 +224,7 @@ namespace CoroStats_BetaTest.Services
         {
             // variable
             string qString = "SELECT DateId FROM dbo.CoronavirusDate WHERE Date = @DATE";
-            int dateId = 1; ;
+            int dateId = -1; ;
 
             _connService.OpenConnection();
 
