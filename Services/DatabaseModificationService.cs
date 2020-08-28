@@ -319,9 +319,39 @@ namespace CoroStats_BetaTest.Services
             // close connection
             _connService.CloseConnection();
         }
-        
 
-        
+        public void AddToDB_NewCoronavirusDeathsDate(int countryId, int dateId, int numNewDeaths)
+        {
+            // variables
+            string qString = "INSERT INTO [dbo].NewCoronavirusDeathsByDate (CountryId, DateId, NewDeaths) "
+                           + "VALUES(@COUNTRYID, @DATEID, @NEWCDEATHS)";
+
+            // open connection
+            _connService.OpenConnection();
+
+            try
+            {
+                // Build SqlCommand
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@COUNTRYID", countryId);
+                cmd.Parameters.AddWithValue("@DATEID", dateId);
+                cmd.Parameters.AddWithValue("@NEWCASES", numNewDeaths);
+
+                // Execute command
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            // close connection
+            _connService.CloseConnection();
+        }
+
+
+
 
         public void AddToDB_CountryInfo_MultipleDates()
         {

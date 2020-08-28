@@ -108,7 +108,8 @@ namespace CoroStats_BetaTest.Services
                 // Add Data to NewCoronavirusCasesByDate
                 _modService.AddToDB_NewCoronavirusCasesDate(countryId, dateId, newCases);
 
-
+                // Add Data to NewCoronavirusDeathsByDate
+                _modService.AddToDB_NewCoronavirusDeathsDate(countryId, dateId, newDeaths);
 
             }
 
