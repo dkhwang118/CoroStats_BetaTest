@@ -130,7 +130,8 @@ namespace CoroStats_BetaTest.Services
                 {
                     if (reader.HasRows)
                     {
-                            value = ReadSingleValue((IDataRecord)reader);  
+                        reader.Read();
+                        value = ReadSingleValue((IDataRecord)reader);  
                     }
                 }
 
@@ -168,6 +169,7 @@ namespace CoroStats_BetaTest.Services
                 {
                     if (reader.HasRows)
                     {
+                        reader.Read();
                         countryId = (int)ReadSingleValue((IDataRecord)reader);
                     }
                 }
@@ -238,6 +240,7 @@ namespace CoroStats_BetaTest.Services
                 {
                     if (reader.HasRows)
                     {
+                        reader.Read();
                         dateId = (int)ReadSingleValue((IDataRecord)reader);
                     }
                 }

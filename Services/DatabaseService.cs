@@ -101,7 +101,12 @@ namespace CoroStats_BetaTest.Services
                 // Check if CoronavirusDate already in DB
                 if ((dateId = _qService.FindDateInDB_ReturnDateId(date)) == -1)
                 {
+                    // if not, add to db and get date
                     dateId = _modService.AddToDB_Date_ReturnDateId(date);
+                }
+                else // if date already in DB, skip adding date and move on to next entry
+                {
+                    continue;
                 }
 
                 // Add Data to NewCoronavirusCasesByDate
