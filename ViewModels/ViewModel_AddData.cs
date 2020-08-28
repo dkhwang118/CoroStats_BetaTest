@@ -18,6 +18,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using CoroStats_BetaTest.Pages;
+using CoroStats_BetaTest.Services;
 
 namespace CoroStats_BetaTest.ViewModels
 {
@@ -29,13 +30,15 @@ namespace CoroStats_BetaTest.ViewModels
         private RelayCommand _command_AddDataFromSpreadsheet;
         private Window _window_currentDataEntryWindow;
         private bool _canOpenNewView;
+        private DatabaseService _db;
 
         #endregion // Fields
 
         #region Constructor
 
-        public ViewModel_AddData()
+        public ViewModel_AddData(DatabaseService db)
         {
+            _db = db;
             this.DisplayName = "Add Data";
             _canOpenNewView = true;
         }

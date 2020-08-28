@@ -99,7 +99,7 @@ namespace CoroStats_BetaTest.ViewModels
             if (!_viewModelStore.TryGetValue("AddData", out viewModel))
             {
                 
-                _viewModelStore.Add("AddData", new ViewModel_AddData());
+                _viewModelStore.Add("AddData", new ViewModel_AddData(_db));
             }
             this.CurrentContent.Content = _viewModelStore["AddData"];
         }

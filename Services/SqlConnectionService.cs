@@ -83,7 +83,14 @@ namespace CoroStats_BetaTest
         /// </summary>
         public void InitializeDatabaseConnection()
         {
-            _conn = new SqlConnection(_connectionString);
+            try
+            {
+                _conn = new SqlConnection(_connectionString);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Corona Statistics Database Helper");
+            }
         }
 
         /// <summary>

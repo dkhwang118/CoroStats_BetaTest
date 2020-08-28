@@ -145,6 +145,38 @@ namespace CoroStats_BetaTest.Services
             return (int)value;
         }
 
+        public bool IsCountryPresentInDB(string countryName)
+        {
+            // variable
+            string qString = "SELECT * FROM dbo.CountryInfo WHERE Name = @NAME";
+            bool isPresent = false;
+
+            _connService.OpenConnection();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@NAME", countryName);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        isPresent = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return isPresent;
+        }
+
         #endregion // Public Methods
 
         #region Helper Methods

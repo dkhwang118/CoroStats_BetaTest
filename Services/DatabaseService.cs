@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows;
 
 namespace CoroStats_BetaTest.Services
 {
@@ -46,6 +47,11 @@ namespace CoroStats_BetaTest.Services
             _integrityService.DatabaseCheckOnStartup();
         }
 
+        public void InitializeDatabaseConnection()
+        {
+            _connService.InitializeDatabaseConnection();
+        }
+
         public Dictionary<string, int> GetTotalCasesDeathsRecoveries()
         {
             return _qService.GetTotalCasesDeathsRecoveries();
@@ -54,9 +60,14 @@ namespace CoroStats_BetaTest.Services
         public void AddToDB_WHO_CSV_FileData(string csvFilePath)
         {
             // reused variables
-            string month = "";
-            string day = "";
-            string year = "";
+            string date = "";
+            string countryCode = "";
+            string countryName = "";
+            string WHO_region = "";
+            int newCases = 0;
+            int cumulativeCases = 0;
+            int newDeaths = 0;
+            int cumulativeDeaths = 0;
 
 
             // Prep ExcelFileParsingService
@@ -70,12 +81,47 @@ namespace CoroStats_BetaTest.Services
             while (!_parser.EndOfFile)
             {
                 // Get line of data
-                string[] fields = _parser.GetFields();
+                (date, countryCode, countryName, 
+                    WHO_region, newCases, 
+                    cumulativeCases, newDeaths, cumulativeDeaths) = _parser.GetFields_Formatted();
 
-                // Separate Date from fields
+
                 
             }
 
+        }
+
+        public void AddCountryDataToDB(string countryName, string WHO_countryCode,
+                                        string WHO_region, string totalCases, string totalDeaths)
+        {
+            // variables
+            int WHO_regionId;
+            int _totalCases = Int32.Parse(totalCases);
+            int _totalDeaths = Int32.Parse(totalDeaths);
+
+
+            // Instantiate DB connection
+            _connService.InitializeDatabaseConnection();
+
+            // Check if Country already exists in database
+            if (_qService.IsCountryPresentInDB(countryName))
+            {
+                MessageBox.Show(String.Format("Country {0} is already present in Database!", countryName), "CoronaStats Database Helper");
+                return;
+            }
+
+            // Check if region is in database
+            WHO_regionId = _qService.GetWHO_Region(WHO_region);
+            if (WHO_regionId == 0) // If region is not in database => add row and return regionId
+            {
+                WHO_regionId = _modService.AddToDB_WHO_Region_ReturnRegionId(WHO_region);
+            }
+
+            // Add country info to DB w/ WHO_RegionId
+            _modService.AddToDB_NewCountryInfo_NoPopulation(WHO_countryCode, countryName, WHO_regionId, _totalCases, _totalDeaths);
+
+            // Dispose of DB connection
+            _connService.Conn.Dispose();
         }
 
 

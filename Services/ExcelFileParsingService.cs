@@ -79,74 +79,28 @@ namespace CoroStats_BetaTest.Services
             _parser.Close();
         }
 
-        public string GetFormattedDate_MonthDayYear(string date)
-        {
-            bool date_YearMonthDay = false;
-            bool date_MonthDayYear = false;
-            char delim = ' ';
-            string[] date_separated = { "0", "0", "0" };
-            string returnDate = "";
-
-            // Determine delimiter
-            if (date.Contains("/"))
-            {
-                delim = '/';
-                date_separated = date.Split("/");
-            }
-            else if (date.Contains("-"))
-            {
-                delim = '-';
-                date_separated = date.Split("-");
-            }
-
-            // Determine date structure - first pass of actual row data
-            if (date_separated[0].Length == 2)
-            {
-                date = date_separated[0] + date_separated[1] + date_separated[2];
-            }
-            else if (date_separated[0].Length == 4)
-            {
-                date = date_separated[1] + date_separated[2] + date_separated[0];
-            }
-
-            return date
-        }
-
         /// <summary>
-        /// Gets the date structure found within the file
+        /// Gets the next row of values from the currently opened file 
+        /// with a pre-formatted date string for database input
+        /// and cases converted to ints
         /// </summary>
-        /// <param name="date">date string read from file</param>
-        /// <returns>(delimiter char, bool if date is YearMonthDay format, bool if date is MonthDayYear format, a string[] of the date itself</returns>
-        public (char, bool, bool, string[]) GetDateStructure(string date)
+        public (string, string, string, string, int, int, int, int) GetFields_Formatted()
         {
-            bool date_YearMonthDay = false;
-            bool date_MonthDayYear = false;
-            char delim = ' ';
-            string[] date_separated = { "0", "0", "0" };
+            // variables
+            string[] fields;
+            
+            // read-in row
+            fields = _parser.ReadFields();
 
-            // Determine delimiter
-            if (date.Contains("/"))
-            {
-                delim = '/';
-                date_separated = date.Split("/");
-            }
-            else if (date.Contains("-"))
-            {
-                delim = '-';
-                date_separated = date.Split("-");
-            }
-
-            // Determine date structure - first pass of actual row data
-            if (date_separated[0].Length == 2)
-            {
-                date_MonthDayYear = true;
-            }
-            else if (date_separated[0].Length == 4)
-            {
-                date_YearMonthDay = true;
-            }
-
-            return (delim, date_YearMonthDay, date_MonthDayYear, date_separated);
+            // return values
+            return (GetFormattedDate_MonthDayYear(fields[0]),   // Date
+                        fields[1],                              // Country Code
+                        fields[2],                              // Country Name
+                        fields[3],                              // WHO Region
+                        Int32.Parse(fields[4]),                 // New Cases
+                        Int32.Parse(fields[5]),                 // Cumulative Cases
+                        Int32.Parse(fields[6]),                 // New Deaths
+                        Int32.Parse(fields[7]));                // Cumulative Deaths
         }
 
         public Int16[] GetLatestDate_CSV()
@@ -265,19 +219,23 @@ namespace CoroStats_BetaTest.Services
                     // find highest number of cumulative cases reported for country
                     fields = parser.ReadFields();
 
-                    // if previous data entry country is the same as the current
+                    // if previous data entry for country name is the same as the current
                     if (country_previous == fields[2])
                     {
-                        country_previous = fields[2];
+                        // Get newest total cumulative cases value
                         countryCases_previous = Int32.Parse(fields[5]);
                     }
                     else // hit end of country entries on the last pass
                     {
+                        // Add previous line's cumulative cases to total cumulative cases
                         totalCumulativeCases += countryCases_previous;
-                        countryCases_previous = Int32.Parse(fields[5]);
 
+                        // Get newest total cumulative cases value for new country
+                        countryCases_previous = Int32.Parse(fields[5]);
+                        
+                        // Get newest country name
+                        country_previous = fields[2];
                     }
-                    country_previous = fields[2];
                 }
             }
             return totalCumulativeCases;
@@ -355,5 +313,80 @@ namespace CoroStats_BetaTest.Services
         }
 
         #endregion // Public Methods
+
+        #region Private Methods
+
+        /// <summary>
+        /// Gets the date structure found within the file
+        /// </summary>
+        /// <param name="date">date string read from file</param>
+        /// <returns>(delimiter char, bool if date is YearMonthDay format, bool if date is MonthDayYear format, a string[] of the date itself</returns>
+        private (char, bool, bool, string[]) GetDateStructure(string date)
+        {
+            bool date_YearMonthDay = false;
+            bool date_MonthDayYear = false;
+            char delim = ' ';
+            string[] date_separated = { "0", "0", "0" };
+
+            // Determine delimiter
+            if (date.Contains("/"))
+            {
+                delim = '/';
+                date_separated = date.Split("/");
+            }
+            else if (date.Contains("-"))
+            {
+                delim = '-';
+                date_separated = date.Split("-");
+            }
+
+            // Determine date structure - first pass of actual row data
+            if (date_separated[0].Length == 2)
+            {
+                date_MonthDayYear = true;
+            }
+            else if (date_separated[0].Length == 4)
+            {
+                date_YearMonthDay = true;
+            }
+
+            return (delim, date_YearMonthDay, date_MonthDayYear, date_separated);
+        }
+
+        /// <summary>
+        /// Given a arbitrary date string, returns a formatted string in the form of Month/Day/Year
+        /// </summary>
+        /// <param name="date">date string</param>
+        /// <returns>formatted date string</returns>
+        private string GetFormattedDate_MonthDayYear(string date)
+        {
+            // variables
+            string[] date_separated = { "0", "0", "0" };
+            string returnDate = "";
+
+            // Determine delimiter
+            if (date.Contains("/"))
+            {
+                date_separated = date.Split("/");
+            }
+            else if (date.Contains("-"))
+            {
+                date_separated = date.Split("-");
+            }
+
+            // Determine date structure
+            if (date_separated[0].Length == 2) // if first part of date separated is only 2 chars long
+            {
+                returnDate = String.Format("{0}/{1}/{2}", date_separated[0], date_separated[1], date_separated[2]); // date format is MonthDayYear
+            }
+            else if (date_separated[0].Length == 4) // if first part of date is 4 chars long
+            {
+                returnDate = String.Format("{0}/{1}/{2}", date_separated[1], date_separated[2], date_separated[0]); // date format is YearMonthDay
+            }
+
+            return returnDate;
+        }
+
+        #endregion // Private Methods
     }
 }

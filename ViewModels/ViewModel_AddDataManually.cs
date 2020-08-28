@@ -23,6 +23,7 @@ namespace CoroStats_BetaTest.ViewModels
         private SqlConnectionService _connService;
         private DatabaseModificationService _modService;
         private DatabaseQueryService _qService;
+        private DatabaseService _db;
         
 
         #endregion // Fields
@@ -31,6 +32,7 @@ namespace CoroStats_BetaTest.ViewModels
 
         public ViewModel_AddDataManually()
         {
+            _db = new DatabaseService();
             _connService = new SqlConnectionService();
             _qService = new DatabaseQueryService(_connService);
             _modService = new DatabaseModificationService(_connService);
@@ -154,25 +156,8 @@ namespace CoroStats_BetaTest.ViewModels
                 return;
             }
 
-            _connService.InitializeDatabaseConnection();
-
-            int WHO_regionId;
-            int totalCases = Int32.Parse(_totalCases);
-            int totalDeaths = Int32.Parse(_totalDeaths);
-
-            // Check if region is in database
-            WHO_regionId = _qService.GetWHO_Region(WHO_Region);
-
-            if (WHO_regionId == 0) // If region is not in database => add row and return regionId
-            {
-                WHO_regionId = _modService.AddToDB_WHO_Region_ReturnRegionId(WHO_Region);
-            }
-
-            // Add country info to DB w/ WHO_RegionId
-            _modService.AddToDB_NewCountryInfo_NoPopulation(WHO_CountryCode, CountryName, WHO_regionId, totalCases, totalDeaths);
-
-            // Dispose of DB
-            _connService.Conn.Dispose();
+            // Add data to DB
+            _db.AddCountryDataToDB(_countryName, _WHOcountryCode, _WHOregion, _totalCases, _totalDeaths);
         }
 
         /// <summary>
