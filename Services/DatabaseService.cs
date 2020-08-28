@@ -74,6 +74,9 @@ namespace CoroStats_BetaTest.Services
             _parser = new ExcelFileParsingService(csvFilePath);
             _parser.SetParserToCSV();
 
+            // Instantiate DB Connection
+            _connService.InitializeDatabaseConnection();
+
             // Get first line to define columns
             string[] cols = _parser.GetFields();
 
@@ -85,13 +88,19 @@ namespace CoroStats_BetaTest.Services
                     WHO_region, newCases, 
                     cumulativeCases, newDeaths, cumulativeDeaths) = _parser.GetFields_Formatted();
 
+                // Check if country is not already in DB
+                if (!_qService.IsCountryPresentInDB(countryName))
+                {
+                    // Add country to DB; no adding of Total Cases or Total Deaths
+                    AddCountryDataToDB_Spreadsheet(countryName, countryCode, WHO_region);
+                }
 
-                
+
             }
 
         }
 
-        public void AddCountryDataToDB(string countryName, string WHO_countryCode,
+        public void AddCountryDataToDB_Manual(string countryName, string WHO_countryCode,
                                         string WHO_region, string totalCases, string totalDeaths)
         {
             // variables
@@ -124,8 +133,26 @@ namespace CoroStats_BetaTest.Services
             _connService.Conn.Dispose();
         }
 
-
-
         #endregion // Public methods
+
+        #region Private Methods
+
+        private void AddCountryDataToDB_Spreadsheet(string countryName, string WHO_countryCode,
+                                        string WHO_region)
+        {
+            int WHO_regionId;
+
+            // Check if region is in database
+            WHO_regionId = _qService.GetWHO_Region(WHO_region);
+            if (WHO_regionId == 0) // If region is not in database => add row and return regionId
+            {
+                WHO_regionId = _modService.AddToDB_WHO_Region_ReturnRegionId(WHO_region);
+            }
+
+            // Add country info to DB w/ WHO_RegionId
+            _modService.AddToDB_NewCountryInfo_NoPopulation(WHO_countryCode, countryName, WHO_regionId, 0, 0);
+        }
+
+        #endregion // Private Methods
     }
 }

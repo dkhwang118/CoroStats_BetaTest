@@ -157,7 +157,7 @@ namespace CoroStats_BetaTest.ViewModels
             }
 
             // Add data to DB
-            _db.AddCountryDataToDB(_countryName, _WHOcountryCode, _WHOregion, _totalCases, _totalDeaths);
+            _db.AddCountryDataToDB_Manual(_countryName, _WHOcountryCode, _WHOregion, _totalCases, _totalDeaths);
         }
 
         /// <summary>
