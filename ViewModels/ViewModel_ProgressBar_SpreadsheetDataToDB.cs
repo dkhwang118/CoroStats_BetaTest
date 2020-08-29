@@ -24,12 +24,11 @@ namespace CoroStats_BetaTest.ViewModels
 
         }
 
-        public ViewModel_ProgressBar_SpreadsheetDataToDB(int minValue, ref int maxValue, ref DatabaseService db)
+        public ViewModel_ProgressBar_SpreadsheetDataToDB(int minValue, int maxValue, DatabaseService db)
         {
             _minValue = minValue;
             _maxValue = maxValue;
             _db = db;
-            ProgressBarUpdateThread_Start();
         }
 
         #endregion // Constructors
@@ -45,6 +44,13 @@ namespace CoroStats_BetaTest.ViewModels
         {
             get => _maxValue;
         }
+
+        public int CurrentValue
+        {
+            get => _db.TotalEntriesChecked;
+        }
+
+       
 
         #endregion
 

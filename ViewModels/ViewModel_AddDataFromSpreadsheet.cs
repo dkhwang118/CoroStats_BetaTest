@@ -4,6 +4,8 @@
 /// 
 /// 
 ///     Contains Data/Variables to be shown on the Add Data From Spreadhseet page
+///
+///     Multithreading help credit: https://docs.microsoft.com/en-us/dotnet/framework/wpf/advanced/threading-model
 /// 
 ///
 
@@ -72,7 +74,7 @@ namespace CoroStats_BetaTest.ViewModels
                 if (_command_openSpreadsheetFile == null)
                 {
                     _command_openSpreadsheetFile = new RelayCommand(
-                        param => this.OpenSpreadsheetFileAndLoadData(),
+                        param => this.GetMetaData_StartWork(),
                         param => this._canOpenFile
                         );
                 }
@@ -87,7 +89,7 @@ namespace CoroStats_BetaTest.ViewModels
                 if (_command_addSpreadsheetDataToDB == null)
                 {
                     _command_addSpreadsheetDataToDB = new RelayCommand(
-                        param => this.AddSpreadsheetDataToDB(),
+                        param => this.AddFileDataToDB_StartWork(),
                         param => this._canGetDataFromFile
                         );
                 }
@@ -176,51 +178,10 @@ namespace CoroStats_BetaTest.ViewModels
 
         #region Multithreading Methods
 
-        private void GetMetadataHandler()
-        {
-            Thread beginLoadingDateThread = new Thread(new ThreadStart(GetDataThreadStartingPoint));
-            beginLoadingDateThread.SetApartmentState(ApartmentState.STA);
-            beginLoadingDateThread.IsBackground = true;
-            beginLoadingDateThread.Start();
-        }
-
-        private void AddFileDataToDbHandler()
-        {
-            Thread beginDataInputThread = new Thread(new ThreadStart(AddDataToDbThreadStartingPoint));
-            beginDataInputThread.SetApartmentState(ApartmentState.STA);
-            beginDataInputThread.IsBackground = true;
-            beginDataInputThread.Start();
-        }
-
-        private void GetDataThreadStartingPoint()
-        {
-            GetLatestDateOnFile_CSV();
-            GetTotalCasesOnFile_CSV();
-            System.Windows.Threading.Dispatcher.Run();
-        }
-
-        private void AddDataToDbThreadStartingPoint()
-        {
-            int totalEntriesAdded = _db.AddToDB_WHO_CSV_FileData(_spreadsheetFilePath);
-            MessageBox.Show(String.Format("{0} Entries Added to Database!", totalEntriesAdded),
-                                "CoronaStats Database Helper Service");
-            System.Windows.Threading.Dispatcher.Run();
-        }
-
-        private void AddSpreadsheetDataToDb_Begin()
-        {
-
-            AddFileDataToDbHandler();
-        }
-
-        #endregion // Multithreading methods
-
-        #region Public Methods
-
         /// <summary>
         /// Summons the OpenFileDialog to open the excel spreadsheet and loads the latest data entry date
         /// </summary>
-        public void OpenSpreadsheetFileAndLoadData()
+        private void GetSpreadsheetFileAndMetadata(Object stateInfo)
         {
             _spreadsheetFilePath = OpenSpreadsheetFileDialogue();
             if (_spreadsheetFilePath == "Please select the WHO Coronavirus Spreadsheet File") return;
@@ -229,8 +190,40 @@ namespace CoroStats_BetaTest.ViewModels
             _parser = new ExcelFileParsingService(_spreadsheetFilePath);
             LatestDataEntryDate = "Loading Latest Data Entry Date...";
             TotalCumulativeCases = "Calculating Total Cases To Date...";
-            GetMetadataHandler();
+
+            GetLatestDateOnFile_CSV();
+            GetTotalCasesOnFile_CSV();
         }
+
+        private void GetMetaData_StartWork()
+        {
+            ThreadPool.QueueUserWorkItem(GetSpreadsheetFileAndMetadata);
+        }
+
+        private void AddDataToDb(Object stateInfo)
+        {
+            int totalEntriesAdded = _db.AddToDB_WHO_CSV_FileData(_spreadsheetFilePath);
+            MessageBox.Show(String.Format("{0} Entries Added to Database!", totalEntriesAdded),
+                                "CoronaStats Database Helper Service");
+        }
+
+        private void OpenProgressBarWindow(Object stateInfo)
+        {
+            View_ProgressBar_SpreadsheetDataToDB window = new View_ProgressBar_SpreadsheetDataToDB();
+            var viewModel = new ViewModel_ProgressBar_SpreadsheetDataToDB();
+            window.DataContext = viewModel;
+            window.Show();
+        }
+
+        private void AddFileDataToDB_StartWork()
+        {
+            ThreadPool.QueueUserWorkItem(OpenProgressBarWindow);
+            ThreadPool.QueueUserWorkItem(AddDataToDb);
+        }
+
+        #endregion // Multithreading methods
+
+        #region Public Methods
 
         public string OpenSpreadsheetFileDialogue()
         {
@@ -244,20 +237,6 @@ namespace CoroStats_BetaTest.ViewModels
             return _spreadsheetFilePath;
 
             // help from https://www.wpf-tutorial.com/dialogs/the-openfiledialog/
-        }
-
-        public void AddSpreadsheetDataToDB()
-        {
-            // Get values and show ProgressBar window
-            Window view_progressBar = new View_ProgressBar_SpreadsheetDataToDB();
-            var viewModel_progressBar = new ViewModel_ProgressBar_SpreadsheetDataToDB(0, ref _totalDatafileEntries, ref _db);
-
-            view_progressBar.DataContext = viewModel_progressBar;
-            view_progressBar.Show();
-
-            int totalEntriesAdded = _db.AddToDB_WHO_CSV_FileData(_spreadsheetFilePath);
-            MessageBox.Show(String.Format("{0} Entries Added to Database!", totalEntriesAdded),
-                                "CoronaStats Database Helper Service");
         }
 
         /// <summary>
