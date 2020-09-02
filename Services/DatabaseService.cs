@@ -26,6 +26,7 @@ namespace CoroStats_BetaTest.Services
         private ExcelFileParsingService _parser;
 
         private int _totalEntriesChecked;
+        private int _totalEntriesAdded;
 
 
         #endregion // Fields
@@ -33,6 +34,11 @@ namespace CoroStats_BetaTest.Services
         #region Properties
 
         public int TotalEntriesChecked
+        {
+            get => _totalEntriesChecked;
+        }
+
+        public int TotalEntriesLoaded
         {
             get => _totalEntriesChecked;
         }
@@ -84,7 +90,7 @@ namespace CoroStats_BetaTest.Services
             int countryId = 0;
             int dateId = 0;
 
-            int totalEntriesAdded = 0;
+            _totalEntriesAdded = 0;
 
 
             // Prep ExcelFileParsingService
@@ -134,11 +140,11 @@ namespace CoroStats_BetaTest.Services
                 _modService.AddToDB_NewCoronavirusDeathsDate(countryId, dateId, newDeaths);
 
                 _totalEntriesChecked++;
-                totalEntriesAdded++;
+                _totalEntriesAdded++;
 
             }
 
-            return totalEntriesAdded;
+            return _totalEntriesAdded;
 
         }
 

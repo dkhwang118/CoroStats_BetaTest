@@ -193,6 +193,7 @@ namespace CoroStats_BetaTest.ViewModels
 
             GetLatestDateOnFile_CSV();
             GetTotalCasesOnFile_CSV();
+            _totalDatafileEntries = _parser.GetTotalDataEntriesOnFile();
         }
 
         private void GetMetaData_StartWork()
@@ -210,14 +211,16 @@ namespace CoroStats_BetaTest.ViewModels
         private void OpenProgressBarWindow(Object stateInfo)
         {
             View_ProgressBar_SpreadsheetDataToDB window = new View_ProgressBar_SpreadsheetDataToDB();
-            var viewModel = new ViewModel_ProgressBar_SpreadsheetDataToDB();
+            var viewModel = new ViewModel_ProgressBar_SpreadsheetDataToDB(_totalDatafileEntries, _db, window.Close);
             window.DataContext = viewModel;
-            window.Show();
+            window.ShowDialog();
         }
 
         private void AddFileDataToDB_StartWork()
         {
-            ThreadPool.QueueUserWorkItem(OpenProgressBarWindow);
+            Thread progressBarThread = new Thread(OpenProgressBarWindow);
+            progressBarThread.SetApartmentState(ApartmentState.STA);
+            progressBarThread.Start();
             ThreadPool.QueueUserWorkItem(AddDataToDb);
         }
 

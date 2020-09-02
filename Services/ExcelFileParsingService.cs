@@ -103,6 +103,25 @@ namespace CoroStats_BetaTest.Services
                         Int32.Parse(fields[7]));                // Cumulative Deaths
         }
 
+        public int GetTotalDataEntriesOnFile()
+        {
+            int totalRows = 0;
+            using (TextFieldParser parser = new TextFieldParser(@_filePath))
+            {
+                // read first row to negate column titles
+                parser.ReadLine();
+
+                // parse through rest of date column
+                while (!parser.EndOfData)
+                {
+                    //Processing row
+                    parser.ReadLine();
+                    totalRows++;                  
+                }
+            }
+            return totalRows;
+        }
+
         public Int16[] GetLatestDate_CSV()
         {
             string[] fields;
