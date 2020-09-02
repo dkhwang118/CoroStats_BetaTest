@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.VisualBasic.FileIO;
+using System.Diagnostics.PerformanceData;
 
 namespace CoroStats_BetaTest.Services
 {
@@ -120,6 +121,82 @@ namespace CoroStats_BetaTest.Services
                 }
             }
             return totalRows;
+        }
+
+        public Dictionary<string, List<string>> GetAllCountryDatesInFile_CSV()
+        {
+            using (TextFieldParser parser = new TextFieldParser(@_filePath))
+            {
+                Dictionary<string, List<string>> dict_countryDate = new Dictionary<string, List<string>>();
+                List<string> countryDatesList = new List<string>();
+                string[] fields;
+                string date = "";
+                string country = "";
+                string[] checkingDate = { "0", "0", "0" };
+                bool date_YearMonthDay = false;
+                bool date_MonthDayYear = false;
+                char delim = ' ';
+
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(",");
+
+                // read first row to negate column titles
+                parser.ReadLine();
+
+                // read first row
+                fields = parser.ReadFields();
+
+                // determine date structure
+                (delim, date_YearMonthDay, date_MonthDayYear, checkingDate) = GetDateStructure(fields[0]);
+
+                // get country name
+                country = fields[2];
+
+                // if country isn't in dictionary => create new list attached to key = country
+                dict_countryDate[country] = new List<string>();
+
+                // build Date String
+                if (date_MonthDayYear)
+                {
+                    date = String.Format("{0}/{1}/{2}", checkingDate[0], checkingDate[1], checkingDate[2]);
+                }
+                else if (date_YearMonthDay)
+                {
+                    date = String.Format("{0}/{1}/{2}", checkingDate[1], checkingDate[2], checkingDate[0]);
+                }
+
+                // Add date to list
+                dict_countryDate[country].Add(date);
+
+                // parse through rest of date column
+                while (!parser.EndOfData)
+                {
+                    //Processing row
+                    fields = parser.ReadFields();
+                    checkingDate = fields[0].Split(delim);
+
+                    // get country name
+                    country = fields[2];
+
+                    // if country isn't in dictionary => create new list attached to key = country
+                    if (!dict_countryDate.ContainsKey(country)) dict_countryDate[country] = new List<string>();
+
+                    // parse date
+                    if (date_MonthDayYear)
+                    {
+                        date = String.Format("{0}/{1}/{2}", checkingDate[0], checkingDate[1], checkingDate[2]);
+                    }
+                    else if (date_YearMonthDay)
+                    {
+                        date = String.Format("{0}/{1}/{2}", checkingDate[1], checkingDate[2], checkingDate[0]);
+                    }
+
+                    // if date isn't in date's list, add date;
+                    if (!dict_countryDate[country].Contains(date)) dict_countryDate[country].Add(date);
+                }
+
+                return dict_countryDate;
+            }
         }
 
         public Int16[] GetLatestDate_CSV()

@@ -203,6 +203,8 @@ namespace CoroStats_BetaTest.ViewModels
 
         private void AddDataToDb(Object stateInfo)
         {
+            //
+
             int totalEntriesAdded = _db.AddToDB_WHO_CSV_FileData(_spreadsheetFilePath);
             MessageBox.Show(String.Format("{0} Entries Added to Database!", totalEntriesAdded),
                                 "CoronaStats Database Helper Service");

@@ -74,6 +74,17 @@ namespace CoroStats_BetaTest.Services
         {
             return _qService.GetTotalCasesDeathsRecoveries();
         }
+        
+        public void Check_WHO_DataDates_CSV(string csvFilePath)
+        {
+            // Create parser with filePath
+            ExcelFileParsingService parser = new ExcelFileParsingService(csvFilePath);
+
+            // Get all country dates in csv file
+            Dictionary<string, List<string>> dict_countryDate = parser.GetAllCountryDatesInFile_CSV();
+
+            // Lookup all country dates currently held in DB
+        }
 
         public int AddToDB_WHO_CSV_FileData(string csvFilePath)
         {

@@ -324,6 +324,51 @@ namespace CoroStats_BetaTest.Services
             return newCases;
         }
 
+        public List<string> GetDatesOnFile_ByCountryName(string countryName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Method to get dates on file for each country on file
+        /// </summary>
+        /// <returns>A list of tuples with (string countryName, string date)</returns>
+        public List<(string, string)> GetDatesOnFile_AllCountries()
+        {
+            // variable
+            List<(string, string)> countryDates = new List<(string, string)>();
+            string qString = "SELECT [Name], [Date] "
+                            +  "FROM dbo.CountryInfo " 
+                            + "JOIN dbo.NewCoronavirusCasesByDate ON CountryInfo.CountryId = NewCoronavirusCasesByDate.CountryId "
+                            + "JOIN dbo.CoronavirusDate ON NewCoronavirusCasesByDate.DateId = CoronavirusDate.DateId";
+
+            _connService.OpenConnection();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+                List<Object> vals;
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                         vals = ReadSingleRow((IDataRecord)reader);
+                         countryDates.Add(((string)vals[0], (string)vals[1]));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return countryDates;
+        }
+
         #endregion // Public Methods
 
         #region Helper Methods
