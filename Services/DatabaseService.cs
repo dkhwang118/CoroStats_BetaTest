@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 
@@ -77,13 +78,34 @@ namespace CoroStats_BetaTest.Services
         
         public void Check_WHO_DataDates_CSV(string csvFilePath)
         {
+            // variables
+            List<(string, string)> countryDatesNeedingToBeAdded = new List<(string, string)>();
+
             // Create parser with filePath
             ExcelFileParsingService parser = new ExcelFileParsingService(csvFilePath);
 
             // Get all country dates in csv file
-            Dictionary<string, List<string>> dict_countryDate = parser.GetAllCountryDatesInFile_CSV();
+            Dictionary<string, List<string>> countryDates_inFile = parser.GetAllCountryDatesInFile_CSV();
+
+            // Get all country names in csv file
+            string[] countriesInFile = countryDates_inFile.Keys.ToArray();
 
             // Lookup all country dates currently held in DB
+            Dictionary<string, List<string>> countryDates_inDb = _qService.GetDatesOnFile_AllCountries();
+
+            // Check against eachother and build list of data not in db
+
+            // Get countries in DB
+            List<string> countryList = _qService.GetAllCountriesInDb();
+
+            // iter through countries in csv file
+            for (int i = 0; i < countriesInFile.Length; i++)
+            {
+                // define current country and dates list in csv file
+                //List<string> dates = countryDates_inFile[]
+
+            }
+
         }
 
         public int AddToDB_WHO_CSV_FileData(string csvFilePath)

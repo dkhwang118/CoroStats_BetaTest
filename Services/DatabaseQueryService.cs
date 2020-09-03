@@ -221,6 +221,38 @@ namespace CoroStats_BetaTest.Services
             return isPresent;
         }
 
+        public List<string> GetAllCountriesInDb()
+        {
+            // variable
+            List<string> countryList = new List<string>();
+            string qString = "SELECT [Name] FROM dbo.CountryInfo";
+
+            _connService.OpenConnection();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(qString, _connService.Conn);
+                cmd.CommandType = CommandType.Text;
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        reader.Read();
+                        countryList.Add((string)ReadSingleValue((IDataRecord)reader));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+
+            _connService.CloseConnection();
+
+            return countryList;
+        }
+
 
         public int FindDateInDB_ReturnDateId(string date)
         {
@@ -333,10 +365,11 @@ namespace CoroStats_BetaTest.Services
         /// Method to get dates on file for each country on file
         /// </summary>
         /// <returns>A list of tuples with (string countryName, string date)</returns>
-        public List<(string, string)> GetDatesOnFile_AllCountries()
+        public Dictionary<string, List<string>> GetDatesOnFile_AllCountries()
         {
             // variable
-            List<(string, string)> countryDates = new List<(string, string)>();
+            //List<(string, string)> countryDates = new List<(string, string)>();
+            Dictionary<string, List<string>> dict_countryDate = new Dictionary<string, List<string>>();
             string qString = "SELECT [Name], [Date] "
                             +  "FROM dbo.CountryInfo " 
                             + "JOIN dbo.NewCoronavirusCasesByDate ON CountryInfo.CountryId = NewCoronavirusCasesByDate.CountryId "
@@ -355,7 +388,9 @@ namespace CoroStats_BetaTest.Services
                     while (reader.Read())
                     {
                          vals = ReadSingleRow((IDataRecord)reader);
-                         countryDates.Add(((string)vals[0], (string)vals[1]));
+                        //countryDates.Add(((string)vals[0], (string)vals[1]));
+                        if (!dict_countryDate.ContainsKey((string)vals[0])) dict_countryDate[(string)vals[0]] = new List<string>();
+                        if (!dict_countryDate[(string)vals[0]].Contains((string)vals[1])) dict_countryDate[(string)vals[0]].Add((string)vals[1]);
                     }
                 }
             }
@@ -366,7 +401,7 @@ namespace CoroStats_BetaTest.Services
 
             _connService.CloseConnection();
 
-            return countryDates;
+            return dict_countryDate;
         }
 
         #endregion // Public Methods

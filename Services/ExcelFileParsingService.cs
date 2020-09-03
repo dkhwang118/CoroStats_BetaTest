@@ -15,6 +15,7 @@ using System.Text;
 using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.VisualBasic.FileIO;
 using System.Diagnostics.PerformanceData;
+using System.Net.Http.Headers;
 
 namespace CoroStats_BetaTest.Services
 {
@@ -128,6 +129,7 @@ namespace CoroStats_BetaTest.Services
             using (TextFieldParser parser = new TextFieldParser(@_filePath))
             {
                 Dictionary<string, List<string>> dict_countryDate = new Dictionary<string, List<string>>();
+                //List<(string, string)> countryDates = new List<(string, string)>();
                 List<string> countryDatesList = new List<string>();
                 string[] fields;
                 string date = "";
@@ -168,6 +170,9 @@ namespace CoroStats_BetaTest.Services
                 // Add date to list
                 dict_countryDate[country].Add(date);
 
+                // add country and date to (string, string) list
+                //countryDates.Add((country, date));
+
                 // parse through rest of date column
                 while (!parser.EndOfData)
                 {
@@ -193,6 +198,9 @@ namespace CoroStats_BetaTest.Services
 
                     // if date isn't in date's list, add date;
                     if (!dict_countryDate[country].Contains(date)) dict_countryDate[country].Add(date);
+
+                    // add country and date to (string, string) list
+                    //countryDates.Add((country, date));
                 }
 
                 return dict_countryDate;
